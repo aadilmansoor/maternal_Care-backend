@@ -6,6 +6,10 @@ const approvedservicerproviders = require('../DataBase/approvedServiceProvider')
 // schema import
 const servicerproviders = require('../DataBase/modelServiceProvider')
 
+//booking request data collection
+const bookingRequests = require('../DataBase/bookingRequest')
+
+
 exports.serviceProviderRegistration = async(req,res)=>{
 
     const exp_crt = req.file.filename
@@ -139,3 +143,92 @@ exports.loginServiceProvider = async (req,res)=>{
     }
 }
 
+
+//get user request on  service provider page
+
+exports.get_bookingRequest_to_serviceProvider = async(req,res)=>{
+    const {serviceProvider_id,serviceProvider_email}=req.body
+    try{
+
+        const response = await bookingRequests.find({serviceProvider_id,serviceProvider_email,serviceProvider_status:"pending"})
+        if(response.length>0){
+            res.status(200).json({response,message:"succesfully"})
+        }
+        else{
+            res.status(400).json({message:"No new booking requested"})
+        }
+    }
+    catch(error){
+        res.status(500).json({message:" server error"})
+
+    }
+}
+
+//service provider accept user bboking request
+
+exports.accept_bookingRequest_by_serviceprovider = async( req,res)=>{
+    const {_id}=req.body
+    try{
+        const response = await bookingRequests.findOne({_id})
+        if(response){
+            const filter={_id}
+            const update={
+                $set:{serviceProvider_status:"Accepted"}
+            }
+            const result = await bookingRequests.updateOne(filter,update)
+            console.log(result);
+            if(result.modifiedCount==1)
+            {
+                const preUser = await bookingRequests.findOne({_id})
+                res.status(200).json({preUser, message:"Accepted successfully"})
+            }
+            else{
+                res.status(400).json({message:" failed"})
+            }
+
+        }
+        else{
+            res.status(200).json({message:" no user present"})
+
+        }
+
+    }
+    catch(error){
+        res.status(500).json({message:" server error"})
+
+    }
+}
+
+//service provider Reject user booking request
+exports.reject_bookingRequest_by_serviceprovider = async( req,res)=>{
+    const {_id}=req.body
+    try{
+        const response = await bookingRequests.findOne({_id,serviceProvider_status:"pending"})
+        if(response){
+            const filter={_id}
+            const update={
+                $set:{serviceProvider_status:"Rejected"}
+            }
+            const result = await bookingRequests.updateOne(filter,update)
+            console.log(result);
+            if(result.modifiedCount==1)
+            {
+                const preUser = await bookingRequests.findOne({_id})
+                res.status(200).json({preUser, message:"Rejected successfully"})
+            }
+            else{
+                res.status(400).json({message:" failed"})
+            }
+
+        }
+        else{
+            res.status(400).json({message:" no user present"})
+
+        }
+
+    }
+    catch(error){
+        res.status(500).json({message:" server error"})
+
+    }
+}

@@ -2,6 +2,8 @@
 const jwt = require('jsonwebtoken')
 // nodemailer import
 const nodemailer = require('nodemailer');
+//booking request data collection
+const bookingRequests = require('../DataBase/bookingRequest')
 
 
 
@@ -12,7 +14,7 @@ const servicerproviders = require('../DataBase/modelServiceProvider')
 const approvedservicerproviders=require('../DataBase/approvedServiceProvider')
 
 
-// view all service provider list on admin page
+// view all service provider request list on admin page
 
 exports.getServiceProviderRequest= async(req,res)=>{
     console.log('inside api call to get all service providers');
@@ -23,11 +25,25 @@ exports.getServiceProviderRequest= async(req,res)=>{
     res.status(200).json({response, message:"list of all service providers request"})
    }
    catch(error){
- response.status(500).json({error,message:"failed to fetch data"})
+ res.status(500).json({error,message:"failed to fetch data"})
    }
 }
 
+// view all approved service provider list
 
+exports.getApprovedServiceProviderList = async (req,res)=>{
+
+try{
+    const response = await approvedservicerproviders.find()
+    res.status(200).json({response, message:"list of all approved service providers"})
+
+}
+catch(error){
+res.status(500).json({error,message:"failed to fetch data"})
+}
+
+
+}
 
 
 
@@ -92,5 +108,41 @@ async function sendConfirmationEmail(serviceProviderEmail) {
 }
 
 
+// get all details of booking details
 
 
+
+exports.getBookingRequest = async (req,res)=>{
+
+    try{
+        const response = await bookingRequests.find()
+        res.status(200).json({response, message:"list of all booking request"})
+    
+    }
+    catch(error){
+    res.status(500).json({error,message:"failed to fetch data"})
+    }
+    
+    }
+    
+
+// admin approval for request
+
+// exports.admin_approval_bookingrequest = async( req,res)=>{
+//     const {_id}=req.body
+//     try{
+//         const response = await bookingRequests.findOne({_id,serviceProvider_status:"Accepted"})
+//         if(response){
+//          console.log(response);
+//         }
+//         else{
+//             res.status(400).json({message:" no user present"})
+
+//         }
+
+//     }
+//     catch(error){
+//         res.status(500).json({message:" server error"})
+
+//     }
+// }
