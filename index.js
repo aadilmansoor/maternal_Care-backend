@@ -1,30 +1,47 @@
+require("dotenv").config();
 
-require('dotenv').config()
+const express = require("express");
 
+require("./DataBase/connection");
 
-const express= require('express')
+const cors = require("cors");
 
-require('./DataBase/connection')
+const server = express();
+const router = require("./routes/routes");
 
+server.use(
+  cors({
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    credentials: true,
+  })
+);
 
-const cors=require('cors')
+server.use(express.json());
 
+server.options("*", cors());
 
-const server=express()
-const router = require('./routes/routes')
+server.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  next();
+});
 
-server.use(express.json())
-server.use(router)   //server to use router
-server.use(cors())
+server.use(router);
 
-const port = 4000 || process.env.port
+const port = 4000 || process.env.port;
 
+server.listen(port, () => {
+  console.log(`server start at ${port}`);
+});
 
-
-server.listen(port,()=>{
-    console.log(`server start at ${port}`);
-})
-
-server.get('/', (req,res)=>{
-    res.status(200).json("service started")
-})
+server.get("/", (req, res) => {
+  res.status(200).json("service started");
+});
