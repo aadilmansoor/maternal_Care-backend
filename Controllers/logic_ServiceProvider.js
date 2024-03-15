@@ -18,7 +18,8 @@ exports.serviceProviderRegistration = async(req,res)=>{
     try{
 
         const existingUser = await servicerproviders.findOne({email})
-        if(existingUser){
+        const registereduser = await approvedservicerproviders.findOne({email})
+        if(existingUser && registereduser){
             res.status(406).json({message:'Account already exist'})
         }
         else{
