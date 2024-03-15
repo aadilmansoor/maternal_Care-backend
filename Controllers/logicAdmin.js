@@ -91,7 +91,8 @@ exports.approvalServiceProvider=async (req,res)=>{
     console.log(result);
     res.status(200).json({message:"Successfully approved"})
     textmessage='Your request as a service provider has been approved. You can now login to the platform and start offering your services.'
-    await sendConfirmationEmail(email,textmessage);
+    subjectmail ='Service Provider Approval Confirmation'
+    await sendConfirmationEmail(email,subjectmail,textmessage);
  }
  else{
     res.status(404).json({message:"approval failed"})}
@@ -107,7 +108,7 @@ catch(err){
 // mail send
 
 
-async function sendConfirmationEmail(serviceProviderEmail,textmessage) {
+async function sendConfirmationEmail(serviceProviderEmail,subjectmail,textmessage) {
     // Create a Nodemailer transporter using SMTP
     const transporter = nodemailer.createTransport({
         service:'gmail',
@@ -125,7 +126,7 @@ async function sendConfirmationEmail(serviceProviderEmail,textmessage) {
     const  info = await transporter.sendMail({
         from: 'cc', // Admin's email address
         to: [serviceProviderEmail], // Service provider's email address
-        subject: 'Service Provider Approval Confirmation',
+        subject:subjectmail ,
         text: textmessage
     });
 
