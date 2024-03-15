@@ -4,14 +4,38 @@ const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer');
 //booking request data collection
 const bookingRequests = require('../DataBase/bookingRequest')
+const users = require('../DataBase/modelUser')
 
-
+const approved_booking = require('../DataBase/Admin_approved_Booking_Collections')
 
 // schema import  for serviceprovider
 const servicerproviders = require('../DataBase/modelServiceProvider')
 
 //schema import for approved service provider
 const approvedservicerproviders=require('../DataBase/approvedServiceProvider')
+
+// schema admin
+const admindetails= require('../DataBase/modelAdmin')
+
+//Admin Login
+exports.adminlogin = async (req,res)=>{
+    const {username,password}=req.body
+    try{
+        const response = await admindetails.findOne({username,password})
+        if(response){
+            res.status(200).json({response,message:"login successfully"})
+
+        }
+        else{
+            res.status(400).json({message:"Incorrect username and password"})
+        }
+
+    }
+    catch(err){
+
+    }
+}
+
 
 
 // view all service provider request list on admin page
@@ -66,7 +90,8 @@ exports.approvalServiceProvider=async (req,res)=>{
     const result = await servicerproviders.deleteOne({email})
     console.log(result);
     res.status(200).json({message:"Successfully approved"})
-    await sendConfirmationEmail(email);
+    textmessage='Your request as a service provider has been approved. You can now login to the platform and start offering your services.'
+    await sendConfirmationEmail(email,textmessage);
  }
  else{
     res.status(404).json({message:"approval failed"})}
@@ -82,7 +107,7 @@ catch(err){
 // mail send
 
 
-async function sendConfirmationEmail(serviceProviderEmail) {
+async function sendConfirmationEmail(serviceProviderEmail,textmessage) {
     // Create a Nodemailer transporter using SMTP
     const transporter = nodemailer.createTransport({
         service:'gmail',
@@ -98,10 +123,10 @@ async function sendConfirmationEmail(serviceProviderEmail) {
 
     // Send mail with defined transport object
     const  info = await transporter.sendMail({
-        from: 'projectmern123@gmail.com', // Admin's email address
+        from: 'cc', // Admin's email address
         to: [serviceProviderEmail], // Service provider's email address
         subject: 'Service Provider Approval Confirmation',
-        text: 'Your request as a service provider has been approved. You can now login to the platform and start offering your services.'
+        text: textmessage
     });
 
     console.log('Confirmation email sent: ', info.messageId);
@@ -128,21 +153,37 @@ exports.getBookingRequest = async (req,res)=>{
 
 // admin approval for request
 
-// exports.admin_approval_bookingrequest = async( req,res)=>{
-//     const {_id}=req.body
-//     try{
-//         const response = await bookingRequests.findOne({_id,serviceProvider_status:"Accepted"})
-//         if(response){
-//          console.log(response);
-//         }
-//         else{
-//             res.status(400).json({message:" no user present"})
+exports.admin_approval_bookingrequest = async( req,res)=>{
+    const {_id}=req.body
+    // textmessageuser='your booking request accepted '
+    // textmessageserviceprovider='you are assigned for duty please check your login page'
+    try{
+        const response = await bookingRequests.findOne({_id,serviceProvider_status:"Accepted"})
+        if(response){
+        //  console.log(response);
+        const{user_name,user_email,userId,treatment_Type,care_type,scheduled_from,scheduled_to,location,serviceProvider_id,serviceProvider_email,serviceProvider_status}=response
+        const newuser = await users.findOne({_id:userId})
+        const {userPhoneNumber}= newuser
+        const serviceProvider = await approvedservicerproviders.findById(serviceProvider_id)
+        const serviceProvider_mobile= serviceProvider.mobile
+        console.log(user_name,user_email,userId,userPhoneNumber,treatment_Type,care_type,scheduled_from,scheduled_to,location,serviceProvider_id,serviceProvider_email,serviceProvider_mobile,serviceProvider_status);
 
-//         }
+      const newBooking = new approved_booking({user_name,user_email,userId,userPhoneNumber,treatment_Type,care_type,scheduled_from,scheduled_to,location,serviceProvider_id,serviceProvider_email,serviceProvider_mobile,serviceProvider_status})
+        newBooking.save()
+        // await sendConfirmationEmail(user_email,textmessageuser);
+        // await sendConfirmationEmail(serviceProvider_email,textmessageserviceprovider);
 
-//     }
-//     catch(error){
-//         res.status(500).json({message:" server error"})
 
-//     }
-// }
+ res.status(200).json({newBooking,message:"booking confirmed"})
+        }
+        else{
+            res.status(400).json({message:"Request rejected by service provider"})
+
+        }
+
+    }
+    catch(error){
+        res.status(500).json({message:" server error"})
+
+    }
+}

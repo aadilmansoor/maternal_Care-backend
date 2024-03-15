@@ -6,7 +6,7 @@ const {serviceProviderRegistration, serviceProviderfinalRegistration,loginServic
 
 
 // import admin logic
-const {getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest}=require('../Controllers/logicAdmin')
+const {getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin}=require('../Controllers/logicAdmin')
 
 // import logic file for user
 const {userRegistration,bookingRequest} = require('../Controllers/logicUser')
@@ -18,6 +18,8 @@ const uploadImage=require('../multer/serviceProviderImageConfig')
 
 
 const router = new express.Router()
+//Admin login
+router.post('/maternalcare/admin/login',adminlogin)
 
 //register user
 router.post('/maternalcare/user/register',userRegistration)
@@ -56,6 +58,9 @@ router.post('/maternalcare/user/bookingrequest/serviceprovider/reject',reject_bo
 //booking request display on admin page
 router.get('/maternalcare/user/bookingrequest/admin/view',getBookingRequest)
 
+//// admin approval for request
+
+router.post('/maternalcare/user/bookingrequest/Admin/accept',admin_approval_bookingrequest)
 
 
 

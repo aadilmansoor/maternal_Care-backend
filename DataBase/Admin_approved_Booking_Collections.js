@@ -1,0 +1,59 @@
+const mongoose = require('mongoose')
+
+const approved_booking = mongoose.model('approved_booking',{
+
+    user_name:{
+        type:String,
+        required:true
+    },
+    user_email:{
+        type:String,
+        required:true,unique:true
+    },
+    userId:{
+        type:String,
+        required:true
+    },
+    userPhoneNumber:{
+        type:String,
+        required:true
+    },
+    treatment_Type:{
+        type:String,
+        required:true
+    },
+    care_type:{
+        type:String,
+        required:true
+    },
+    scheduled_from:{
+        type:String,
+        required:true
+    },
+    scheduled_to:{
+        type:String,
+        required:true
+    },
+    location:{
+        type:String,
+        required:true
+    },
+    serviceProvider_id:{
+        type:String,
+        required:true
+    },
+    serviceProvider_email:{
+        type:String,
+        required:true,unique:true
+    },
+    serviceProvider_mobile:{
+        type:String,
+        required:true
+    },
+    serviceProvider_status:{
+        type:String,
+        required:true
+    }
+
+})
+module.exports=approved_booking
