@@ -8,6 +8,8 @@ const servicerproviders = require("../DataBase/modelServiceProvider");
 //booking request data collection
 const bookingRequests = require("../DataBase/bookingRequest");
 
+const attendance_ServiceProvider = require("../DataBase/attendance_ServiceProvider");
+
 exports.serviceProviderRegistration = async (req, res) => {
   const exp_crt = req.file.filename;
   // const image = req.file.filename
@@ -229,3 +231,33 @@ exports.reject_bookingRequest_by_serviceprovider = async (req, res) => {
     res.status(500).json({ message: " server error" });
   }
 };
+
+
+//Attendance of service provider
+
+exports.attendanceServiveProvider = async(req,res)=>{
+  const {date,time_in ,time_out,workingHours,serviceProviderId,present} = req.body
+
+  const user = await approvedservicerproviders.findOne({_id : serviceProviderId})
+  try
+  {
+    const check = await attendance_ServiceProvider.findOne({serviceProviderId,date,present:true})
+    
+    if(check){
+      res.status(401).json({message:"already marked"})
+      
+      }
+      else{
+        const newUser = new attendance_ServiceProvider({
+          date,time_in ,time_out,workingHours,serviceProviderId,present})
+          await newUser.save()
+    res.status(200).json({newUser,message:"attendance marked"})
+      }
+      
+  }
+  
+catch(error)
+{
+  res.status(500).json({error, message:"server error"})
+}
+}
