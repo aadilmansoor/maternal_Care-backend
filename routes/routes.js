@@ -6,7 +6,7 @@ const {attendanceServiveProvider,serviceProviderRegistration, serviceProviderfin
 
 
 // import admin logic
-const {getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin}=require('../Controllers/logicAdmin')
+const {getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider}=require('../Controllers/logicAdmin')
 
 // import logic file for user
 const {userRegistration,bookingRequest} = require('../Controllers/logicUser')
@@ -67,5 +67,7 @@ router.post('/maternalcare/user/serviceprovider/attendance',attendanceServivePro
 
 //attendance view of service provider
 router.post('/maternalcare/user/serviceprovider/attendanceview',attendanceView)
+// attendance view accordance with service provider id on admin page
 
+router.post('/maternalcare/admin/serviceprovider/attendanceview/admin',attendanceViewServiceProvider)
 module.exports=router

@@ -14,6 +14,9 @@ const servicerproviders = require('../DataBase/modelServiceProvider')
 //schema import for approved service provider
 const approvedservicerproviders=require('../DataBase/approvedServiceProvider')
 
+//schema attendance
+const attendance_ServiceProvider = require("../DataBase/attendance_ServiceProvider");
+
 // schema admin
 const admindetails= require('../DataBase/modelAdmin')
 
@@ -190,4 +193,47 @@ exports.admin_approval_bookingrequest = async( req,res)=>{
 
     }
 }
-// get attendance of service provider
+
+
+// get attendance of service provider on admin page
+exports.attendanceViewServiceProvider = async (req, res) => {
+    const { id , month, year } = req.body;
+ 
+        try {
+          
+          const user = await attendance_ServiceProvider.find({ serviceProviderId: id });
+  if(user){
+    console.log(user);
+    const filteredUser = user.filter(record => {
+        const recordMonth = parseInt(record.date.split('-')[1]);
+        const recordyear = parseInt(record.date.split('-')[2]);
+        // console.log(parseInt(month));
+        // console.log(recordMonth);
+        if (month && year)
+          return recordMonth === parseInt(month) && recordyear === parseInt(year)// Compare with provided month value
+        else if (month)
+          return recordMonth === parseInt(month)
+        else if (year)
+          return recordyear === parseInt(year)
+
+      });
+      if (filteredUser.length > 0) {
+        const sum = filteredUser.reduce((a,b)=>a + b.workingHours,0)
+        res.status(200).json({filteredUser,sum});
+
+      }
+      else {
+        res.status(200).json({ message: "no attendance found" });
+      }
+
+   
+  }
+  
+          // res.status(200).json(filtereduser);
+        } 
+        catch (error) {
+          console.error("Error while fetching user data:", error);
+          res.status(500).json({ message: "Internal Server Error" });
+        }
+   
+  }
