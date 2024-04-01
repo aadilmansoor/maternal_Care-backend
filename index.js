@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const cookieParser = require('cookie-parser');
 
 require("./DataBase/connection");
 
@@ -19,7 +20,7 @@ server.use(
 server.use(express.json());
 
 server.options("*", cors());
-
+server.use(cookieParser())
 server.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
