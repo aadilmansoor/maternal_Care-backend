@@ -92,10 +92,11 @@ exports.approvalServiceProvider=async (req,res)=>{
  if(response){
     const result = await servicerproviders.deleteOne({email})
     console.log(result);
-    res.status(200).json({message:"Successfully approved"})
     textmessage='Your request as a service provider has been approved. You can now login to the platform and start offering your services.'
     subjectmail ='Service Provider Approval Confirmation'
     await sendConfirmationEmail(email,subjectmail,textmessage);
+    res.status(200).json({message:"Successfully approved"})
+  
  }
  else{
     res.status(404).json({message:"approval failed"})}

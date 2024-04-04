@@ -143,7 +143,7 @@ exports.loginServiceProvider = async (req, res) => {
           serviceProvider_Id: existingUser._id,
         },
         "superkey2024",
-        { expiresIn: '15m' }
+        { expiresIn: '60m' }
       );
       res.status(200).json({ token,existingUser });
       // res
