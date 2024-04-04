@@ -145,7 +145,7 @@ exports.loginServiceProvider = async (req, res) => {
         "superkey2024",
         { expiresIn: '15m' }
       );
-      res.cookie('token', token, { httpOnly: true, maxAge: 15 * 60 * 1000 }).status(200).json({ existingUser });
+      res.status(200).json({ token,existingUser });
       // res
       //   .status(200)
       //   .json({ existingUser, token, message: "login Successfully" });
@@ -293,12 +293,26 @@ exports.reject_bookingRequest_by_serviceprovider = async (req, res) => {
 
 //Attendance of service provider
 
-exports.attendanceServiveProvider = async (req, res) => {
-  const { date, time_in, time_out, workingHours, serviceProviderId, present } = req.body
+exports.attendanceServiveProvider = async (req, res,next) => {
+  const { date, time_in, time_out, workingHours, present } = req.body
 
-  const user = await approvedservicerproviders.findOne({ _id: serviceProviderId })
   try {
-    const check = await attendance_ServiceProvider.findOne({ serviceProviderId, date, present: true })
+    const token = req.headers.authorization;
+console.log(token);
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+    jwt.verify(token, 'superkey2024', async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: 'Forbidden: Invalid token' });
+      }
+      req.userId = decoded.serviceProvider_Id;
+    const userId =req.userId
+    const user = await approvedservicerproviders.findOne({ _id:userId })
+if(!user){
+  res.status(400).json({message:"user not found"})
+}
+    const check = await attendance_ServiceProvider.findOne({ serviceProviderId:userId, time_in, time_out,workingHours, present: true })
 
     if (check) {
       res.status(401).json({ message: "already marked" })
@@ -306,15 +320,16 @@ exports.attendanceServiveProvider = async (req, res) => {
     }
     else {
       const newUser = new attendance_ServiceProvider({
-        date, time_in, time_out, workingHours, serviceProviderId, present
+        date, time_in, time_out, workingHours, serviceProviderId:userId, present
       })
       await newUser.save()
       res.status(200).json({ newUser, message: "attendance marked" })
     }
 
+  })
   }
-
   catch (error) {
     res.status(500).json({ error, message: "server error" })
   }
 }
+
