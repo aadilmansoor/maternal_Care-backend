@@ -196,7 +196,7 @@ exports.attendanceView = async (req, res, next) => {
           res.status(200).json(filteredUser);
         }
         else {
-          res.status(200).json({ message: "no attendance found" });
+          res.status(401).json({ message: "no attendance found" });
         }
 
         next()

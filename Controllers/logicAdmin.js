@@ -131,7 +131,7 @@ async function sendConfirmationEmail(serviceProviderEmail,subjectmail,textmessag
         from: 'cc', // Admin's email address
         to: [serviceProviderEmail], // Service provider's email address
         subject:subjectmail ,
-        text: textmessage
+        text:textmessage
     });
 
     console.log('Confirmation email sent: ', info.messageId);
