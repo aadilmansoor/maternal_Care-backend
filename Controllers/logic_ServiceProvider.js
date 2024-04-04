@@ -161,7 +161,7 @@ exports.loginServiceProvider = async (req, res) => {
 exports.attendanceView = async (req, res, next) => {
   const { month, year } = req.body;
 
-  const token = req.cookies.token;
+  const token = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
