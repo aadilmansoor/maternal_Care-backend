@@ -6,7 +6,7 @@ const {attendanceServiveProvider,serviceProviderRegistration, serviceProviderfin
 
 
 // import admin logic
-const {getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider}=require('../Controllers/logicAdmin')
+const {rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider}=require('../Controllers/logicAdmin')
 
 // import logic file for user
 const {userRegistration,bookingRequest} = require('../Controllers/logicUser')
@@ -39,6 +39,8 @@ router.get('/maternalcare/admin/listofapprovedserviceproviderRequest',getApprove
 //approval of service provider by admin
 router.post('/maternalcare/admin/approval/serviceprovider',approvalServiceProvider)
 
+//rejection of service provider by admin
+router.post('/maternalcare/admin/rejection/serviceprovider',rejectionServiceProvider)
 //service provider login
 router.post('/maternalcare/serviceprovider/login',loginServiceProvider)
 

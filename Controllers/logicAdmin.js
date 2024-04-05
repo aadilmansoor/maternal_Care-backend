@@ -137,6 +137,28 @@ async function sendConfirmationEmail(serviceProviderEmail,subjectmail,textmessag
     console.log('Confirmation email sent: ', info.messageId);
 }
 
+// reject service provider request by admin
+exports.rejectionServiceProvider=async (req,res)=>{
+  const {email}=req.body
+  try
+  {
+    
+ 
+
+  const result = await servicerproviders.deleteOne({email})
+  console.log(result);
+  textmessage='Your request as a service provider has been rejected by admin.for any queries please contact admin'
+  subjectmail =' Rejected!!! '
+  await sendConfirmationEmail(email,subjectmail,textmessage);
+  res.status(200).json({message:"Rejected"})
+
+}
+
+catch(err){
+  res.status(500).json({err,message:"server error"})
+}
+}
+
 
 // get all details of booking details
 

@@ -1,4 +1,6 @@
 const bcrypt=require('bcryptjs')
+const jwt = require("jsonwebtoken");
+
 const users = require('../DataBase/modelUser')
 const bookingRequests = require('../DataBase/bookingRequest')
 //User Registration
@@ -15,6 +17,32 @@ exports.userRegistration= async(req,res)=>{
     catch(error){
         res.status(500).json(error)
 
+    }
+}
+
+
+exports.userLogin = async (req,res )=>{
+    const { userEmail,userPassword}=req.body
+    try {
+        const exist_User = await users.findOne({userEmail,userPassword})
+     if(exist_User!==null && exist_User!=undefined){
+        const token =jwt.sign(
+            {
+                user_id : exist_User._id
+            },
+            "user_superkey2024",{expiresIn:'60m'}
+        );
+        res.status(200).json({exist_User,token})
+     }
+
+     else{
+        res.status(404).json({message:"incorrect email and password"})
+     }
+    } 
+    
+    catch (error) {
+        res.status(500).json({ message: " Request Not approved by admin" });
+     
     }
 }
 
