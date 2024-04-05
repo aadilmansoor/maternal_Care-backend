@@ -47,7 +47,12 @@ const approvedservicerproviders = mongoose.model('approvedservicerproviders',{
     rate:{
         type:Number,
         required:true
+    },
+    location:{
+        type:String,
+        required:true
     }
+    
    
     
 

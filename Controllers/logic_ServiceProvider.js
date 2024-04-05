@@ -23,6 +23,7 @@ exports.serviceProviderRegistration = async (req, res) => {
     qualification,
     exp_year,
     rate,
+    location
   } = req.body;
   try {
     const existingUser = await servicerproviders.findOne({ email });
@@ -43,6 +44,7 @@ exports.serviceProviderRegistration = async (req, res) => {
         exp_year,
         rate,
         status: "pending",
+        location
       });
       await newUser.save();
       res

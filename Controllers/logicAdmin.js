@@ -77,7 +77,7 @@ res.status(500).json({error,message:"failed to fetch data"})
 // Aproval of service provider by admin and delete the same from serviceprovider requestlist
 
 exports.approvalServiceProvider=async (req,res)=>{
-    const {username,email,password,mobile,profile_image,service,specialization,qualification,experience_crt,exp_year,rate}=req.body
+    const {username,email,password,mobile,profile_image,service,specialization,qualification,experience_crt,exp_year,rate,location}=req.body
     try
     {
       
@@ -86,7 +86,7 @@ exports.approvalServiceProvider=async (req,res)=>{
         res.status(400).json({message:"already approved"})
     }
     else{
-   const newUser = new approvedservicerproviders({username,email,password,mobile,profile_image,service,specialization,qualification,experience_crt,exp_year,rate})
+   const newUser = new approvedservicerproviders({username,email,password,mobile,profile_image,service,specialization,qualification,experience_crt,exp_year,rate,location})
  await newUser.save()
  const response = await approvedservicerproviders.findOne({email})
  if(response){
