@@ -3,7 +3,7 @@ const express = require('express')
 
 
 //import logic service provider
-const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, serviceProviderfinalRegistration,loginServiceProvider,get_bookingRequest_to_serviceProvider,accept_bookingRequest_by_serviceprovider,reject_bookingRequest_by_serviceprovider, attendanceView, bookingView}=require('../Controllers/logic_ServiceProvider')
+const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, serviceProviderfinalRegistration,loginServiceProvider,get_bookingRequest_to_serviceProvider,accept_bookingRequest_by_serviceprovider,reject_bookingRequest_by_serviceprovider, attendanceView, bookingView, bookingAcceptServiceProvider, bookingRejectServiceProvider}=require('../Controllers/logic_ServiceProvider')
 
 
 // import admin logic
@@ -125,5 +125,12 @@ router.post('/maternalcare/user/primarybooking',primaryBooking)
 
 //booking view service provider
 router.get('/maternalcare/serviceprovider/primarybooking/view',bookingView)
+
+// accept booking by service provider
+router.post('/maternalcare/serviceprovider/primarybooking/accept',bookingAcceptServiceProvider)
+
+
+// reject booking by service provider
+router.post('/maternalcare/serviceprovider/primarybooking/reject',bookingRejectServiceProvider)
 
 module.exports=router

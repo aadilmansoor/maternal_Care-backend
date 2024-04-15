@@ -370,3 +370,81 @@ exports.bookingView =async (req,res)=>{
     res.status(500).json({message:"invalid token"})
   }
 }
+
+// service provider accept
+exports.bookingAcceptServiceProvider = async(req,res)=>{
+
+  const {id}= req.body
+  try {
+    console.log(id);
+    const token = req.headers.authorization;
+    console.log(token);
+        if (!token) {
+          return res.status(401).json({ message: "Unauthorized: No token provided" });
+        }
+        jwt.verify(token, 'superkey2024', async (err, decoded) => {
+          if (err) {
+            return res.status(403).json({ message: 'Forbidden: Invalid token' });
+          }
+          const serviceProviderId = decoded.serviceProvider_Id;
+    console.log(serviceProviderId);
+          //{
+          //check already booked service provider on booked collection
+
+         // }
+         const updatedBooking = await Bookings.findOneAndUpdate(
+          { _id: id ,serviceProviderStatus: "pending"},
+          { $set: { serviceProviderStatus: "accepted" } },
+          { new: true }
+        );
+    console.log(updatedBooking);
+        if (!updatedBooking) {
+          return res.status(404).json({ message: "Booking already processed" });
+        }
+    
+        res.status(200).json({ booking: updatedBooking });
+
+         
+  })} catch (error) {
+    res.status(500).json({message:"invalid token"})
+  }
+}
+
+// service provider reject
+exports.bookingRejectServiceProvider = async(req,res)=>{
+
+  const {id}= req.body
+  try {
+    console.log(id);
+    const token = req.headers.authorization;
+    console.log(token);
+        if (!token) {
+          return res.status(401).json({ message: "Unauthorized: No token provided" });
+        }
+        jwt.verify(token, 'superkey2024', async (err, decoded) => {
+          if (err) {
+            return res.status(403).json({ message: 'Forbidden: Invalid token' });
+          }
+          const serviceProviderId = decoded.serviceProvider_Id;
+    console.log(serviceProviderId);
+          //{
+          //check already booked service provider on booked collection
+
+         // }
+         const updatedBooking = await Bookings.findOneAndUpdate(
+          { _id: id ,serviceProviderStatus: "pending"},
+          { $set: { serviceProviderStatus: "rejected" } },
+          { new: true }
+        );
+    console.log(updatedBooking);
+        if (!updatedBooking) {
+          return res.status(404).json({ message: "Booking  already processed" });
+        }
+    
+        res.status(200).json({ booking: updatedBooking , message:"booking accepted"});
+
+         
+  })} catch (error) {
+    res.status(500).json({message:"invalid token"})
+  }
+}

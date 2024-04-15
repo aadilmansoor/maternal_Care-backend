@@ -144,7 +144,7 @@ exports.searchServiceprovider = async (req, res) => {
 
   };
 
-  // service provider service booking
+  //  service booking
   exports.primaryBooking= async(req,res)=>{
   
   
@@ -153,7 +153,10 @@ exports.searchServiceprovider = async (req, res) => {
         serviceProviderName,service,serviceProviderId,
         profile_img,serviceProviderEmail,
         serviceProviderMobile,rate} = req.body
+        const formattedStartTime = formatToTime(startingTime);
+        const formattedEndTime = formatToTime(endingTime);
 
+        // console.log(formattedTime); // Output: "10:00"
         try {
             const token = req.headers.authorization;
             console.log(token);
@@ -170,8 +173,10 @@ exports.searchServiceprovider = async (req, res) => {
                const userName=decoded.user_name
                const userId =decoded.user_id
  
-                const user = await  Bookings({userEmail,userName,userId,typeOfCare,services,startingTime,
-                    endingTime,startDate,endDate,location,
+
+
+                const user = await  Bookings({userEmail,userName,userId,typeOfCare,services,startingTime:formattedStartTime,
+                    endingTime:formattedEndTime,startDate,endDate,location,
                     serviceProviderName,service,serviceProviderId,
                     profile_img,serviceProviderEmail,
                     serviceProviderMobile,rate,serviceProviderStatus:"pending",
@@ -186,3 +191,11 @@ exports.searchServiceprovider = async (req, res) => {
 
         }
        }
+
+       function formatToTime(number) {
+        const formattedTime = `${number.toString().padStart(2, '0')}:00`;
+        return formattedTime;
+      }
+      
+     
+      
