@@ -1,8 +1,17 @@
 const bcrypt=require('bcryptjs')
 const jwt = require("jsonwebtoken");
 
+
 const users = require('../DataBase/modelUser')
-const bookingRequests = require('../DataBase/bookingRequest')
+
+const categories = require('../DataBase/schemaCategory')
+
+const webinarSchema = require('../DataBase/webinar_schema')
+
+const blogSchema = require('../DataBase/blog_Schema');
+const readytoBook = require('../DataBase/readytoBook');
+const { response } = require('express');
+const Bookings = require('../DataBase/booking');
 //User Registration
 exports.userRegistration= async(req,res)=>{
 
@@ -18,7 +27,34 @@ exports.userRegistration= async(req,res)=>{
         res.status(500).json(error)
 
     }
+
 }
+
+// get all category
+exports.getallcategories = async (req,res)=>{
+    try {
+        const newUser = await categories.find()
+        
+        res.status(200).json({newUser})
+
+    } catch (error) {
+      res.status(500).json({message:"server error"})
+    }
+}
+
+//get all subcategory
+exports.getallSubcategories = async (req,res)=>{
+    const {mainCategory} = req.body
+    try {
+        const newUser = await categories.findOne({mainCategory})
+        
+        res.status(200).json({newUser})
+
+    } catch (error) {
+      res.status(500).json({message:"server error"})
+    }
+}
+
 
 
 exports.userLogin = async (req,res )=>{
@@ -49,46 +85,104 @@ exports.userLogin = async (req,res )=>{
 }
 
 
-// booking request by user
-exports.bookingRequest = async (req,res)=>{
-    // const {treatment_Type,care_type,scheduled_from,scheduled_to,location,serviceProvider_id,serviceProvider_email}= req.body
- 
-try{  
 
-    const token = req.headers.authorization;
-    if(!token){
-        return res.status(401).json({message: "Unauthorized: No token provided"})
+
+// get all webinar
+exports.webinarView = async(req,res)=>{
+    try {
+        
+        const webinar = await webinarSchema.find()
+        if(!webinar){
+            res.status(400).json({message:"no webinar founded"})
+        }
+
+        else{
+            res.status(200).json({webinar,message:"webinar fetched successfully"})
+        }
+
+    } catch (error) {
+        
     }
-    verify(token,"user_superkey2024", async (err , decoded)=>{
-      if  (err){
+}
 
-            return res.status(403).json({ message: 'Forbidden: Invalid token' });
+
+// get all blogs
+exports.blogsView = async(req,res)=>{
+    try {
+        
+        const blog = await blogSchema.find()
+        if(!blog){
+            res.status(400).json({message:"no webinar founded"})
+        }
+
+
+        else{
+            res.status(200).json({blog,message:"webinar fetched successfully"})
+        }
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
+
+// api for searching service provider by location and service
+
+exports.searchServiceprovider = async (req, res) => {
+    console.log('inside api call to search service provider');
+    const { location, service } = req.body;
+    try {
+        const searchUser = await readytoBook.find({ location, service });
+        if (searchUser.length === 0) {
+            res.status(400).json({ message: 'No service provider available' });
+        } else {
+            res.status(200).json({ searchUser, message: 'List of service providers in this location' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+  };
+
+  // service provider service booking
+  exports.primaryBooking= async(req,res)=>{
+  
+  
+       const {typeOfCare,services,startingTime,
+        endingTime,startDate,endDate,location,
+        serviceProviderName,service,serviceProviderId,
+        profile_img,serviceProviderEmail,
+        serviceProviderMobile,rate} = req.body
+
+        try {
+            const token = req.headers.authorization;
+            console.log(token);
+                if (!token) {
+                  return res.status(401).json({ message: "Unauthorized: No token provided" });
+                }
+            jwt.verify(token, "user_superkey2024", async (err, decoded) => {
+                if (err) {
+                  return res.status(403).json({ message: 'Forbidden: Invalid token' });
+                }
+           
+                const userEmail= decoded.user_email
+              
+               const userName=decoded.user_name
+               const userId =decoded.user_id
+ 
+                const user = await  Bookings({userEmail,userName,userId,typeOfCare,services,startingTime,
+                    endingTime,startDate,endDate,location,
+                    serviceProviderName,service,serviceProviderId,
+                    profile_img,serviceProviderEmail,
+                    serviceProviderMobile,rate,serviceProviderStatus:"pending",
+                    adminStatus:"pending"})
+                    
+
+                await user.save()
+                  res.status(200).json({user,message:"saved succesfully"})
+               
+            } )    } catch (error) {
+            res.status(500).json({message:"internal server error"})
 
         }
-        const userId = decoded.user_id
-       const user_email = decoded.user_email
-       const user_name = decoded.user_name
-
-       console.log(userId,user_email,user_name);
-
-    })
-//     const response = await users.findOne({userEmail:user_email,_id:userId})
-//     if(response)
-// { const newUser = await bookingRequests({user_email,user_name,userId,treatment_Type,care_type,scheduled_from,scheduled_to,location,serviceProvider_id,serviceProvider_email,serviceProvider_status:"pending"})
-//  await newUser.save()
-//  res.status(200).json({newUser,message:"booking successfully,admin will contact you soon"})
-// }
-// else
-// {
-// res.status(400).json({message:"please register first"})
-// }
-}
-
-
- catch(error){
-    res.status(500).json(error)
-
-}
-}
-
-
+       }

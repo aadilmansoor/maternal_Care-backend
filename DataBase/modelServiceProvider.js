@@ -52,6 +52,7 @@ const servicerproviders = mongoose.model('servicerproviders',{
         type:String,
        
     },
+    
     location:{
         type:String,
         required:true

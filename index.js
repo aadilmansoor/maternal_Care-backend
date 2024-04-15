@@ -35,6 +35,13 @@ server.use(function (req, res, next) {
   next();
 });
 
+// enable  image folder
+server.use('/serviceProviderImage',express.static('./serviceProviderImage'))
+server.use('/upload_cirtificate', express.static('./upload_cirtificate'))
+server.use('/webinarImage', express.static('./webinarImage'))
+server.use('/blogImage', express.static('./blogImage'))
+
+
 server.use(router);
 
 const port = 4000 || process.env.port;

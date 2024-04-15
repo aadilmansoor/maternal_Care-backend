@@ -8,16 +8,16 @@ const attendance_ServiceProvider = mongoose.model('attendance_ServiceProvider',{
     },
     time_in:{
         type:String,
-        required:true
+        // required:true
 
     },
     time_out:{
         type:String,
-        required:true
+        // required:true
     },
     workingHours:{
         type:Number,
-        required:true
+        // required:true
     },
     serviceProviderId:{
         type:String,
@@ -27,6 +27,8 @@ const attendance_ServiceProvider = mongoose.model('attendance_ServiceProvider',{
         type:Boolean,
         require:true
     }
+
+    
 })
 
 module.exports = attendance_ServiceProvider
