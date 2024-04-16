@@ -152,7 +152,7 @@ exports.searchServiceprovider = async (req, res) => {
         endingTime,startDate,endDate,location,
         serviceProviderName,service,serviceProviderId,
         profile_img,serviceProviderEmail,
-        serviceProviderMobile,rate} = req.body
+        serviceProviderMobile,rate,workinghours,amountPaid} = req.body
         const formattedStartTime = formatToTime(startingTime);
         const formattedEndTime = formatToTime(endingTime);
 
@@ -179,7 +179,7 @@ exports.searchServiceprovider = async (req, res) => {
                     endingTime:formattedEndTime,startDate,endDate,location,
                     serviceProviderName,service,serviceProviderId,
                     profile_img,serviceProviderEmail,
-                    serviceProviderMobile,rate,serviceProviderStatus:"pending",
+                    serviceProviderMobile,rate,workinghours,amountPaid,amountStatus:"unpaid",serviceProviderStatus:"pending",
                     adminStatus:"pending"})
                     
 
@@ -191,7 +191,7 @@ exports.searchServiceprovider = async (req, res) => {
 
         }
        }
-       
+
 // conversion to time
        function formatToTime(number) {
         const formattedTime = `${number.toString().padStart(2, '0')}:00`;

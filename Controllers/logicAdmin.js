@@ -383,3 +383,88 @@ exports.blogRegistration =async(req,res)=>{
 
     }
   }
+
+  //get service provider accepted request
+  exports.viewacceptedBooking = async(req,res)=>{
+    try {
+      const user = await booking.find({serviceProviderStatus: "accepted"})
+      if(!user){
+        res.status(400).json({message:"no bookings available "})
+      }
+      else{
+        res.status(200).json({user, message:"listed successfully"})
+      }
+    } catch (error) {
+      res.status(500).json({message:"server error"})
+
+    }
+  }
+
+   //get  reject request
+   exports.viewrejectedBooking = async(req,res)=>{
+    try {
+      const user = await booking.find({serviceProviderStatus: "rejected"})
+      if(!user){
+        res.status(400).json({message:"no bookings available "})
+      }
+      else{
+        res.status(200).json({user, message:"listed successfully"})
+      }
+    } catch (error) {
+      res.status(500).json({message:"server error"})
+
+    }
+  }
+
+     //get  pending request
+     exports.viewpendingBooking = async(req,res)=>{
+      try {
+        const user = await booking.find({serviceProviderStatus: "pending"})
+        if(!user){
+          res.status(400).json({message:"no bookings available "})
+        }
+        else{
+          res.status(200).json({user, message:"listed successfully"})
+        }
+      } catch (error) {
+        res.status(500).json({message:"server error"})
+  
+      }
+    }
+
+
+// accept booking by admin
+
+exports.confirmBooking = async(req,res)=>{
+
+   const {id}=req.body
+  try {
+    const user= await booking.findById(id)
+    if (!user){
+
+      res.status(400).json({message:"No booking present"})
+    }
+    else{
+      if(user.serviceProviderStatus==="rejected" ||user.serviceProviderStatus==="pending" ){
+       res.status(401).json({message:"can not approve unless service provider accepted"})
+      }
+       const updatedBooking = await booking.findOneAndUpdate(
+          { _id: id ,serviceProviderStatus: "accepted" ,
+          adminStatus:"pending"},
+          { $set: { adminStatus:"approved" } },
+          { new: true }
+        );
+    console.log(updatedBooking);
+        if (!updatedBooking) {
+          return res.status(404).json({ message: "Booking  already processed" });
+        }
+    
+        res.status(200).json({ booking: updatedBooking , message:"booking accepted"});
+
+    }
+
+
+  } catch (error) {
+    
+  }
+}

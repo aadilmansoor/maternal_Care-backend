@@ -72,6 +72,18 @@ const bookingSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    workinghours:{
+        type:Number,
+        required:true
+    },
+    amountPaid:{
+        type:Number,
+        required:true
+    },
+    amountStatus:{
+        type:String,
+        required:true
+    },
     serviceProviderStatus:{
         type:String,
         required:true
