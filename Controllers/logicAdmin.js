@@ -32,6 +32,8 @@ const blogSchema = require('../DataBase/blog_Schema')
 //schema for ready to book
 const readytoBook= require('../DataBase/readytoBook')
 
+const booking = require('../DataBase/booking')
+
 //Admin Login
 exports.adminlogin = async (req,res)=>{
     const {username,password}=req.body
@@ -363,4 +365,21 @@ exports.blogRegistration =async(req,res)=>{
     
   }
     
+  }
+
+  //booking view on admin page
+
+  exports.viewAllBooking = async(req,res)=>{
+    try {
+      const user = await booking.find()
+      if(!user){
+        res.status(400).json({message:"no bookings "})
+      }
+      else{
+        res.status(200).json({user, message:"listed successfully"})
+      }
+    } catch (error) {
+      res.status(500).json({message:"server error"})
+
+    }
   }

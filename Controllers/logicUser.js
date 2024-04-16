@@ -191,7 +191,8 @@ exports.searchServiceprovider = async (req, res) => {
 
         }
        }
-
+       
+// conversion to time
        function formatToTime(number) {
         const formattedTime = `${number.toString().padStart(2, '0')}:00`;
         return formattedTime;

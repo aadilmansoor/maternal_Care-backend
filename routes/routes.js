@@ -7,7 +7,7 @@ const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, servi
 
 
 // import admin logic
-const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration}=require('../Controllers/logicAdmin')
+const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking}=require('../Controllers/logicAdmin')
 
 // import logic file for user
 const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking} = require('../Controllers/logicUser')
@@ -132,5 +132,8 @@ router.post('/maternalcare/serviceprovider/primarybooking/accept',bookingAcceptS
 
 // reject booking by service provider
 router.post('/maternalcare/serviceprovider/primarybooking/reject',bookingRejectServiceProvider)
+
+// view all booking requests
+router.get('/maternalcare/primarybooking/view',viewAllBooking)
 
 module.exports=router
