@@ -199,4 +199,78 @@ exports.searchServiceprovider = async (req, res) => {
       }
       
      
-      
+    // get unpaid service booking  bill 
+
+    exports.getUnpaidBill = async(req,res)=>{
+        try {
+            const token = req.headers.authorization;
+            console.log(token);
+                if (!token) {
+                  return res.status(401).json({ message: "Unauthorized: No token provided" });
+                }
+            jwt.verify(token, "user_superkey2024", async (err, decoded) => {
+                if (err) {
+                  return res.status(403).json({ message: 'Forbidden: Invalid token' });
+                }
+           
+                const userEmail= decoded.user_email
+              
+               const userName=decoded.user_name
+               const userId =decoded.user_id
+ 
+            const bill = await Bookings.find({amountStatus:"unpaid"})
+          
+            if(bill.length>0){
+                res.status(200).json({bill,message:"bill fetched successfully"})
+            }
+            else{
+                res.status(400).json({message:"No bill to Paid"})
+
+            }
+
+          
+               
+            } )    } catch (error) {
+            res.status(500).json({message:"internal server error"})
+
+        }
+    }
+
+    //get  booking status of user
+
+
+
+    exports.getbookingDetails = async(req,res)=>{
+        try {
+            const token = req.headers.authorization;
+            console.log(token);
+                if (!token) {
+                  return res.status(401).json({ message: "Unauthorized: No token provided" });
+                }
+            jwt.verify(token, "user_superkey2024", async (err, decoded) => {
+                if (err) {
+                  return res.status(403).json({ message: 'Forbidden: Invalid token' });
+                }
+           
+                const userEmail= decoded.user_email
+              
+               const userName=decoded.user_name
+               const userId =decoded.user_id
+ 
+            const user = await Bookings.find({userId:userId})
+          
+            if(user.length>0){
+                res.status(200).json({user,message:" fetched successfully"})
+            }
+            else{
+                res.status(400).json({message:"No bookings available"})
+
+            }
+
+          
+               
+            } )    } catch (error) {
+            res.status(500).json({message:"internal server error"})
+
+        }
+    }

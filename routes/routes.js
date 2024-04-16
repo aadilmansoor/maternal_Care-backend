@@ -10,7 +10,7 @@ const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, servi
 const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking}=require('../Controllers/logicAdmin')
 
 // import logic file for user
-const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking} = require('../Controllers/logicUser')
+const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails} = require('../Controllers/logicUser')
 
 
 // import multer file
@@ -148,6 +148,13 @@ router.get('/maternalcare/primarybooking/serviceprovider/accept/view',viewaccept
 
      //get  pending request
      router.get('/maternalcare/primarybooking/serviceprovider/pending/view',viewpendingBooking)
+
+     //get unpaid bill on userPage
+     router.get('/maternalcare/primarybooking/billunpaid/view',getUnpaidBill)
+
+     //get booking status of user
+     router.get('/maternalcare/primarybooking/user/view',getbookingDetails)
+
 
 
 module.exports=router

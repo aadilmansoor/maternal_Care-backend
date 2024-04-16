@@ -7,6 +7,11 @@ const readytoBook = mongoose.model('readytoBook',{
         required:true
 
     },
+    serviceProviderId:{
+        type:String,
+        required:true,
+        unique:true
+    },
     email:{
         type:String,
         required:true,
