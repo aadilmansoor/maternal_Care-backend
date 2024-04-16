@@ -1,8 +1,10 @@
 const bcrypt=require('bcryptjs')
 const jwt = require("jsonwebtoken");
 
+const nodemailer = require('nodemailer');
 
 const users = require('../DataBase/modelUser')
+
 
 const categories = require('../DataBase/schemaCategory')
 
@@ -12,6 +14,38 @@ const blogSchema = require('../DataBase/blog_Schema');
 const readytoBook = require('../DataBase/readytoBook');
 const { response } = require('express');
 const Bookings = require('../DataBase/booking');
+const transactions = require('../DataBase/transactions')
+const cron = require('node-cron');
+
+const blockedServiceProvider = require('../DataBase/blockedServiceProvider')
+
+// email send function
+
+async function sendConfirmationEmail(Email,subjectmail,textmessage) {
+    // Create a Nodemailer transporter using SMTP
+    const transporter = nodemailer.createTransport({
+        service:'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: process.env.gmail, // Admin's email
+            pass: process.env.gmailpsw // Admin's password
+        }
+    });
+    
+
+    // Send mail with defined transport object
+    const  info = await transporter.sendMail({
+        from: 'cc', // Admin's email address
+        to: [Email], // Service provider's email address
+        subject:subjectmail ,
+        text:textmessage
+    });
+
+    console.log('Confirmation email sent: ', info.messageId);
+}
+
 //User Registration
 exports.userRegistration= async(req,res)=>{
 
@@ -184,6 +218,9 @@ exports.searchServiceprovider = async (req, res) => {
                     
 
                 await user.save()
+                textmessage='You have one booking request placed, please check your page'
+                subjectmail ='Service Request!!!!!'
+                 await sendConfirmationEmail(serviceProviderEmail,subjectmail,textmessage);
                   res.status(200).json({user,message:"saved succesfully"})
                
             } )    } catch (error) {
@@ -274,3 +311,124 @@ exports.searchServiceprovider = async (req, res) => {
 
         }
     }
+
+    // payment and booking confirm
+    exports.payment = async(req,res)=>{
+        const {id}= req.body         // booking id
+        const date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        try {
+            const token = req.headers.authorization;
+
+            const user = await Bookings.findById(id)
+            if(!user){
+                res.status(404).json({message:"no booking Data available"})
+            }
+            const serviceproviderId = user.serviceProviderId
+            const serviceProvider = await readytoBook.findOne({serviceProviderId:serviceproviderId})
+            if(!serviceProvider){
+                res.status(401).json({message:"no service provider available"})
+            }
+            if (!token) {
+                return res.status(401).json({ message: "Unauthorized: No token provided" });
+              }
+          
+              jwt.verify(token, "user_superkey2024", async (err, decoded) => {
+                if (err) {
+                  return res.status(403).json({ message: 'Forbidden: Invalid token' });
+                }
+           
+                const userEmail= decoded.user_email
+               const userName=decoded.user_name
+               const userId =decoded.user_id
+ 
+          
+            const pay = await Bookings.findOneAndUpdate(
+            { _id: id ,serviceProviderStatus: "accepted" ,
+            adminStatus:"approved",amountStatus: "unpaid"},
+            { $set: { 
+                amountStatus: "paid" } },
+            { new: true }
+            )
+
+           
+            
+            console.log(pay);
+            if (!pay) {
+              return res.status(404).json({ message: "Payment already processed " });
+            }
+        
+            else{
+
+                const transaction = new transactions({
+                    bookingId: id,
+                    fromID: userId,
+                    from_Name: userName,
+                    To_ID: "65f3c3454247fe18fe09ed2e",
+                    To_Name: "admin",
+                    Date: date,
+                    Status: "credited"
+                });
+                console.log(transaction);
+                await transaction.save()
+
+                const blockeduser = await blockedServiceProvider.findOne({serviceProviderId:serviceproviderId})
+                if (blockeduser){
+                    res.status(400).json({message:"Sorry for incovenience this Service provider is Un available now"})
+                }
+                else{
+                    
+                const blockedlist = await blockedServiceProvider.insertMany(serviceProvider)
+                const deletelist = await readytoBook.deleteOne({serviceProviderId:serviceproviderId})
+                console.log(blockedlist);
+                res.status(200).json({ booking:pay , message:"Payment successful and booking confirmed"});
+                }
+
+            }
+            } )
+
+            
+        } catch (error) {
+            res.status(500).json({message:"internal server error"})
+ 
+        }
+    }
+
+
+   
+
+
+
+      cron.schedule('* * * * *', async () => {
+          
+        try {
+            const currentDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            const currentTime = new Date().toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit',second:'2-digit' });
+            const users = await Bookings.find({endingTime:currentTime,endDate:currentDate})
+            if(users.length>0){
+                for (const user of users) {
+                    const updatedBooking = await Bookings.findOneAndUpdate(
+                        { _id: user._id },
+                        { $set: { bookingPeriod:"completed" } },
+                        { new: true }
+                      );
+                    const readytobook = await blockedServiceProvider.findOne({serviceProviderId:user.serviceProviderId});
+                    const serviceprovider = await readytoBook.insertMany(readytobook)
+                    const newuser = await blockedServiceProvider.deleteOne({serviceProviderId:user.serviceProviderId})
+                }
+                console.log("success");
+                res.status(200).json({message:"successful"})
+            }
+            else{
+                res.status(400).json({message:"unsuccessful"})
+            }
+
+            
+
+
+        } catch (error) {
+            res.status(500).json({ message: "internal server error" });
+  
+        }
+      })
+      
