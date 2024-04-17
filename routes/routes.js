@@ -7,7 +7,7 @@ const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, servi
 
 
 // import admin logic
-const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking, salaryCalculation}=require('../Controllers/logicAdmin')
+const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking, salaryCalculation, salaryPayment}=require('../Controllers/logicAdmin')
 
 // import logic file for user
 const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule} = require('../Controllers/logicUser')
@@ -160,5 +160,7 @@ router.post('/maternalcare/primarybooking/user/payment/view',payment)
 
 // salary calculation
 router.post('/maternalcare/serviceprovider/salary',salaryCalculation)
+// salary payment
+router.post('/maternalcare/serviceprovider/salary/payment',salaryPayment)
 
 module.exports=router

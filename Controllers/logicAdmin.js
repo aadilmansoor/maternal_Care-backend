@@ -34,6 +34,8 @@ const readytoBook= require('../DataBase/readytoBook')
 
 const booking = require('../DataBase/booking')
 
+const transactions = require('../DataBase/transactions')
+
 //Admin Login
 exports.adminlogin = async (req,res)=>{
     const {username,password}=req.body
@@ -501,4 +503,52 @@ exports.salaryCalculation = async(req,res)=>{
       res.status(200).json({totalSalary});
 
     }
+  }
+
+  exports.salaryPayment = async(req,res)=>{
+  const {To_ID ,To_Name,amount,email}=req.body
+  const date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+ 
+ try {
+  const payment = await transactions.findOne({To_ID ,To_Name,amount,Date:date})
+  if(payment){
+    res.status(400).json({message:"Payment already done"})
+  }
+ else{
+  const transaction = new transactions({
+    bookingId:"123456",
+    fromID: "65f3c3454247fe18fe09ed2e",
+    from_Name: "admin",
+    To_ID: To_ID,
+    To_Name: To_Name,
+    Date: date,
+    amount:amount,
+    Status: "debited"
+});
+console.log(transaction);
+await transaction.save()
+const user = await transactions.findOne({ bookingId:"123456",
+fromID: "65f3c3454247fe18fe09ed2e",
+from_Name: "admin",
+To_ID: To_ID,
+To_Name: To_Name,
+Date: date,
+amount:amount,
+Status: "debited"})
+if(user){
+  textMessage=`your salary ${amount} credited to your account`
+            subject='Salary Credited!!!'
+            sendConfirmationEmail(email,subject,textMessage) 
+            res.status(200).json({user,message:"Salary transfered successfully"})
+
+}
+
+else{
+  res.status(401).json({message:"payment failed"})
+}
+ }
+ } catch (error) {
+  res.status(500).json({message:"internal server error"})
+
+ }
   }
