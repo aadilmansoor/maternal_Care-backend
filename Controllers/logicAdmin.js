@@ -448,6 +448,8 @@ exports.confirmBooking = async(req,res)=>{
     const user= await booking.findById(id)
     if (!user){
 
+
+
       res.status(400).json({message:"No booking present"})
     }
     else{

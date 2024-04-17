@@ -102,7 +102,7 @@ exports.userLogin = async (req,res )=>{
                 user_email:exist_User.userEmail,
                 user_name : exist_User.userName
             },
-            "user_superkey2024",{expiresIn:'60m'}
+            "user_superkey2024",{expiresIn:'300m'}
         );
         res.status(200).json({exist_User,token})
      }
@@ -255,7 +255,7 @@ exports.searchServiceprovider = async (req, res) => {
                const userName=decoded.user_name
                const userId =decoded.user_id
  
-            const bill = await Bookings.find({amountStatus:"unpaid"})
+            const bill = await Bookings.find({userId:userId,adminStatus:"approved",amountStatus:"unpaid"})
           
             if(bill.length>0){
                 res.status(200).json({bill,message:"bill fetched successfully"})
@@ -329,6 +329,8 @@ exports.searchServiceprovider = async (req, res) => {
             if(!serviceProvider){
                 res.status(401).json({message:"no service provider available book for another one"})
             }
+
+
             if (!token) {
                 return res.status(401).json({ message: "Unauthorized: No token provided" });
               }
@@ -413,6 +415,7 @@ exports.searchServiceprovider = async (req, res) => {
             const currentTime = new Date().toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit',second:'2-digit' });
             const users = await Bookings.find({endingTime:currentTime,endDate:currentDate})
             if(users.length>0){
+                console.log("testing started");
                 for (const user of users) {
                     const updatedBooking = await Bookings.findOneAndUpdate(
                         { _id: user._id },
@@ -424,9 +427,10 @@ exports.searchServiceprovider = async (req, res) => {
                     const newuser = await blockedServiceProvider.deleteOne({serviceProviderId:user.serviceProviderId})
                 }
                 console.log("success");
-                res.status(200).json({message:"successful"})
+                res.status(200).json({updatedBooking,message:"successful"})
             }
             else{
+
                 res.status(400).json({message:"unsuccessful"})
             }
 
