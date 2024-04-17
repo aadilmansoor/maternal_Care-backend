@@ -1,9 +1,8 @@
 
-//1) import mongoose
+
 const mongoose = require('mongoose')
 
-//2) Define Schema to store user collection
-const transactions = new mongoose.Schema({
+const transactions = mongoose.model('transactions',{
     bookingId:{
         type:String,
         required:true
@@ -40,10 +39,7 @@ const transactions = new mongoose.Schema({
         required:true
     }
     
+
 })
 
-//3) Create a model to store user
-const transaction = mongoose.model('transactions',transactions)
-
-//4) Export model
-module.exports=transaction
+module.exports=transactions

@@ -326,7 +326,7 @@ exports.searchServiceprovider = async (req, res) => {
             const serviceproviderId = user.serviceProviderId
             const serviceProvider = await readytoBook.findOne({serviceProviderId:serviceproviderId})
             if(!serviceProvider){
-                res.status(401).json({message:"no service provider available"})
+                res.status(401).json({message:"no service provider available book for another one"})
             }
             if (!token) {
                 return res.status(401).json({ message: "Unauthorized: No token provided" });
@@ -359,7 +359,7 @@ exports.searchServiceprovider = async (req, res) => {
         
             else{
 
-                const transaction = new transactions({
+                const transactions = new transactions({
                     bookingId: id,
                     fromID: userId,
                     from_Name: userName,
@@ -369,8 +369,8 @@ exports.searchServiceprovider = async (req, res) => {
                     amount:amount,
                     Status: "credited"
                 });
-                console.log(transaction);
-                await transaction.save()
+                console.log(transactions);
+                await transactions.save()
 
                 const blockeduser = await blockedServiceProvider.findOne({serviceProviderId:serviceproviderId})
                 if (blockeduser){
@@ -381,6 +381,9 @@ exports.searchServiceprovider = async (req, res) => {
                 const blockedlist = await blockedServiceProvider.insertMany(serviceProvider)
                 const deletelist = await readytoBook.deleteOne({serviceProviderId:serviceproviderId})
                 console.log(blockedlist);
+                textmessage='your booking placed'
+                subjectmail ='Booking  confirmed!!!!!'
+                 await sendConfirmationEmail(userEmail,subjectmail,textmessage);
                 res.status(200).json({ booking:pay , message:"Payment successful and booking confirmed"});
                 }
 
