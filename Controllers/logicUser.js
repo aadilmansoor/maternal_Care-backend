@@ -312,6 +312,7 @@ exports.searchServiceprovider = async (req, res) => {
         }
     }
 
+
     // payment and booking confirm
     exports.payment = async(req,res)=>{
         const {id}= req.body         // booking id
@@ -346,7 +347,8 @@ exports.searchServiceprovider = async (req, res) => {
             { _id: id ,serviceProviderStatus: "accepted" ,
             adminStatus:"approved",amountStatus: "unpaid"},
             { $set: { 
-                amountStatus: "paid" } },
+                amountStatus: "paid",
+                      bookingDate:date } },
             { new: true }
             )
 
@@ -366,7 +368,7 @@ exports.searchServiceprovider = async (req, res) => {
                     res.status(400).json({message:"Sorry for incovenience this Service provider is Un available now"})
                 }
                 else{
-                    const transactions = new transactions({
+                    const transaction = new transactions({
                         bookingId: id,
                         fromID: userId,
                         from_Name: userName,
@@ -376,8 +378,8 @@ exports.searchServiceprovider = async (req, res) => {
                         amount:pay.amountPaid,
                         Status: "credited"
                     });
-                    console.log(transactions);
-                    await transactions.save()
+                    console.log(transaction);
+                    await transaction.save()
                     
                 const blockedlist = await blockedServiceProvider.insertMany(serviceProvider)
                 const deletelist = await readytoBook.deleteOne({serviceProviderId:serviceproviderId})

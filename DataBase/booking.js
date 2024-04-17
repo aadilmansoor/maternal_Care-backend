@@ -4,6 +4,10 @@ const mongoose = require('mongoose')
 
 //2) Define Schema to store user collection
 const bookingSchema = new mongoose.Schema({
+    bookingDate:{
+        type:String,
+
+    },
     userEmail:{
         type:String,
         required:true
@@ -58,7 +62,7 @@ const bookingSchema = new mongoose.Schema({
     },
     profile_img:{
         type:String,
-        required:true
+        // required:true
     },
     serviceProviderEmail:{
         type:String,
