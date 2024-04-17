@@ -359,24 +359,25 @@ exports.searchServiceprovider = async (req, res) => {
         
             else{
 
-                const transactions = new transactions({
-                    bookingId: id,
-                    fromID: userId,
-                    from_Name: userName,
-                    To_ID: "65f3c3454247fe18fe09ed2e",
-                    To_Name: "admin",
-                    Date: date,
-                    amount:amount,
-                    Status: "credited"
-                });
-                console.log(transactions);
-                await transactions.save()
+                
 
                 const blockeduser = await blockedServiceProvider.findOne({serviceProviderId:serviceproviderId})
                 if (blockeduser){
                     res.status(400).json({message:"Sorry for incovenience this Service provider is Un available now"})
                 }
                 else{
+                    const transactions = new transactions({
+                        bookingId: id,
+                        fromID: userId,
+                        from_Name: userName,
+                        To_ID: "65f3c3454247fe18fe09ed2e",
+                        To_Name: "admin",
+                        Date: date,
+                        amount:amount,
+                        Status: "credited"
+                    });
+                    console.log(transactions);
+                    await transactions.save()
                     
                 const blockedlist = await blockedServiceProvider.insertMany(serviceProvider)
                 const deletelist = await readytoBook.deleteOne({serviceProviderId:serviceproviderId})
