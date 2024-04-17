@@ -469,6 +469,36 @@ exports.confirmBooking = async(req,res)=>{
 
 
   } catch (error) {
-    
+    res.status(500).json({message:"server error"})
+
   }
 }
+
+// salary calculation of service provider
+
+exports.salaryCalculation = async(req,res)=>{
+  const {serviceProviderId,month,year }= req.body
+  const users = await attendance_ServiceProvider.find({
+    serviceProviderId:serviceProviderId,present: true})
+
+    const filteredUser = users.filter(record => {
+      const recordMonth = parseInt(record.date.split('-')[1]);
+      const recordyear = parseInt(record.date.split('-')[2]);
+      // console.log(parseInt(month));
+      // console.log(recordMonth);
+      if (month && year)
+        return recordMonth === parseInt(month) && recordyear === parseInt(year)// Compare with provided month value
+     else{
+      res.status(400).json({message:"enter month and year"})
+     }
+
+    });
+    if (filteredUser.length > 0) {
+      const sum = filteredUser.reduce((a,b)=>a + b.workingHours,0)
+      const data = await approvedservicerproviders.findOne({_id:serviceProviderId})
+      const rate = data.rate;
+      totalSalary=sum*rate;
+      res.status(200).json({totalSalary});
+
+    }
+  }
