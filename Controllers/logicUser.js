@@ -314,7 +314,7 @@ exports.searchServiceprovider = async (req, res) => {
 
     // payment and booking confirm
     exports.payment = async(req,res)=>{
-        const {id,amount}= req.body         // booking id
+        const {id}= req.body         // booking id
         const date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
         try {
             const token = req.headers.authorization;
@@ -373,7 +373,7 @@ exports.searchServiceprovider = async (req, res) => {
                         To_ID: "65f3c3454247fe18fe09ed2e",
                         To_Name: "admin",
                         Date: date,
-                        amount:amount,
+                        amount:pay.amountPaid,
                         Status: "credited"
                     });
                     console.log(transactions);
