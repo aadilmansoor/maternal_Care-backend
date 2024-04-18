@@ -16,7 +16,8 @@ const { response } = require('express');
 const Bookings = require('../DataBase/booking');
 const transactions = require('../DataBase/transactions')
 const cron = require('node-cron');
-
+const reviews = require('../DataBase/review')
+const complaints = require('../DataBase/complaints')
 const blockedServiceProvider = require('../DataBase/blockedServiceProvider')
 
 // email send function
@@ -443,3 +444,102 @@ exports.searchServiceprovider = async (req, res) => {
         }
       })
       
+    //Logic to add review to a service provider
+exports.addReview=async(req,res)=>{
+    const date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+    console.log('inside api call to add review')
+    const {serviceProviderId,ratings,comments}=req.body
+    console.log(serviceProviderId,ratings,comments);
+    try {
+      const token = req.headers.authorization;
+      console.log(token);
+      if (!token) {
+          return res.status(401).json({ message: "Unauthorized: No token provided" });
+      }
+      jwt.verify(token, 'user_superkey2024', async (err, decoded) => {
+          if (err) {
+              return res.status(403).json({ message: 'Forbidden: Invalid token' });
+          }
+          const username = decoded.user_name;
+          const userId = decoded.user_id
+          console.log(username);
+          if (!ratings || !comments) {
+            return res.status(400).json({ message: "Missing required fields" });
+          } else {
+            const newReview = new reviews({
+              serviceProviderId,
+              username: username,
+              userId:userId,
+              date:date,
+              ratings,
+              comments
+            });
+            
+            await newReview.save();
+            
+            res.status(200).json({ newReview, message: "Review added successfully" });
+          }
+      
+      });
+      
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });  
+    }
+  }
+
+  // view reviews for service provider
+  
+  exports.viewReview = async(req,res)=>{
+    const { serviceProviderId}= req.body
+    try {
+        const user = await reviews.find({serviceProviderId:serviceProviderId})
+        if(user){
+            res.status(200).json({user,message:"review fetched successfully"})
+        }
+        
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });  
+
+    }
+  }
+
+  exports.chatPost=async(req,res)=>{
+
+    const {userID,message}= req.body
+
+try {
+    const newUser = await complaints({senderId:userID,receiverId:"admin123",user_message:message})
+    await newUser.save()
+    res.status(200).json({message:"message sent"})
+} catch (error) {
+    res.status(500).json({ message: 'message sent error' });  
+
+}
+
+  }
+
+  exports.chatget=async(req,res)=>{
+
+    const {userID}= req.body
+
+
+
+try {
+    const user = await complaints.find({
+        $or: [
+            { senderId: userID },
+            { senderId: "admin123" }
+        ]
+    });
+    res.status(200).json({ user });
+} catch (error) {
+    res.status(500).json({ message: 'message sent error' });  
+
+}
+
+  }
+
+
+

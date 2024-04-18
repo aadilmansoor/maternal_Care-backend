@@ -8,18 +8,20 @@ const complaintSchema = mongoose.model('complaintSchema',{
         type: String,
        
     },
-    senderName:{
-        type:String
-     },
+  
     receiverId:{
         type:String,
         
     },
-    message:{
+   user_message:{
         type:String,
-        required:true
+        // required:true
        
     },
+    admin_message:{
+        type:String,
+  
+    }
 
 
 })

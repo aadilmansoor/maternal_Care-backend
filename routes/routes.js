@@ -7,10 +7,10 @@ const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, servi
 
 
 // import admin logic
-const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking, salaryCalculation, salaryPayment}=require('../Controllers/logicAdmin')
+const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking, salaryCalculation, salaryPayment, chatPostfromAdmin}=require('../Controllers/logicAdmin')
 
 // import logic file for user
-const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule} = require('../Controllers/logicUser')
+const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule, addReview, viewReview, chatPost, chatget} = require('../Controllers/logicUser')
 
 
 // import multer file
@@ -160,7 +160,25 @@ router.post('/maternalcare/primarybooking/user/payment/view',payment)
 
 // salary calculation
 router.post('/maternalcare/serviceprovider/salary',salaryCalculation)
+
+
+
 // salary payment
 router.post('/maternalcare/serviceprovider/salary/payment',salaryPayment)
+
+// reviews add 
+router.post('/maternalcare/serviceprovider/review',addReview)
+
+//view reviw
+router.post('/maternalcare/serviceprovider/review/view',viewReview)
+
+//post chat
+router.post('/maternalcare/chat/post',chatPost)
+
+//get chat
+router.post('/maternalcare/chat/get',chatget)
+
+router.post('/maternalcare/chat/post/from/admin',chatPostfromAdmin)
+
 
 module.exports=router
