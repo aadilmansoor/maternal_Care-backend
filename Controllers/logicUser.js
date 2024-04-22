@@ -18,6 +18,7 @@ const cron = require("node-cron");
 const reviews = require("../DataBase/review");
 const complaints = require("../DataBase/complaints");
 const blockedServiceProvider = require("../DataBase/blockedServiceProvider");
+const approvedservicerproviders = require("../DataBase/approvedServiceProvider");
 
 // email send function
 
@@ -145,7 +146,7 @@ exports.searchServiceprovider = async (req, res) => {
   console.log("inside api call to search service provider");
   const { location, service } = req.body;
   try {
-    const searchUser = await readytoBook.find({ service });
+    const searchUser = await approvedservicerproviders.find({ service });
     if (searchUser.length === 0) {
       res.status(400).json({ message: "No service provider available" });
     } else {
@@ -588,3 +589,48 @@ exports.get_Single_User= async( req,res)=>{
     
   }
 }
+
+// edit user
+
+exports.edit_user = async (req, res) => {
+  const {
+    userName,
+   
+    userPhoneNumber,
+    userAddress} = req.body
+  
+  try {
+    const token = req.headers.authorization;
+    console.log(token);
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
+    }
+    jwt.verify(token, "user_superkey2024", async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
+      }
+
+     
+      const userId = decoded.user_id;
+
+      const update_user = await users.findOneAndUpdate(
+        {_id:userId},
+        {$set : {   userName,
+          userPhoneNumber,
+          userAddress}},{new:true}
+      )
+      if(!update_user){
+        return res.status(404).json({ message: "updation failed" });
+    
+      }
+      res.status(200).json({update_user, message:"updation successful" });
+    
+     })
+    
+     }
+  catch (error) {
+    res.status(500).json({ message: "internal server error" });
+  }
+};

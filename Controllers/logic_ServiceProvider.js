@@ -479,3 +479,54 @@ exports.get_Single_serviceProvider= async( req,res)=>{
     
   }
 }
+
+//Edit service provider personal data
+
+exports.edit_serviceprovider = async (req,res)=>{
+
+  const{
+    username,
+   
+   mobile,
+    service,
+    specialization,
+    qualification,
+    rate,
+    location
+  }= req.body
+
+ try {
+  const token = req.headers.authorization;
+ if(!token){
+  return res.status(401).json({message:"Unauthorized: No token provided"})
+ }
+
+ jwt.verify(token, "superkey2024" , async (err,decoded)=>{
+  if(err){
+    return res.status(403).json({message:"Forbidden: Invalid token"})
+  }
+  const serviceProviderId = decoded.serviceProvider_Id;
+  const updateServiceProvider = await approvedservicerproviders.findOneAndUpdate(
+    {_id:serviceProviderId},
+    {$set : {username,
+      
+     mobile,
+      service,
+      specialization,
+      qualification,
+      rate,
+      location}},{new:true}
+  )
+  if(!updateServiceProvider){
+    return res.status(404).json({ message: "updation failed" });
+
+  }
+  res.status(200).json({updateServiceProvider, message:"updation successful" });
+
+ })
+
+ } catch (error) {
+  res.status(500).json({ message: "Server error" });
+
+ }
+}
