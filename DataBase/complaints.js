@@ -1,6 +1,9 @@
 
 
 
+//  Chat box
+
+
 const mongoose = require('mongoose')
 
 const complaintSchema = mongoose.model('complaintSchema',{
@@ -9,19 +12,22 @@ const complaintSchema = mongoose.model('complaintSchema',{
        
     },
   
-    receiverId:{
-        type:String,
+//     receiverId:{
+//         type:String,
         
-    },
-   user_message:{
-        type:String,
-        // required:true
+//     },
+//    user_message:{
+//         type:[]
+//         // required:true
        
-    },
-    admin_message:{
-        type:String,
+//     },
+//     admin_message:{
+//         type:String,
   
-    }
+//     }
+message:{
+    type:[]
+}
 
 
 })

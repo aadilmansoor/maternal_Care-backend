@@ -506,6 +506,9 @@ exports.salaryCalculation = async(req,res)=>{
       res.status(200).json({totalSalary});
 
     }
+    else{
+      res.status(404).json({message:"found Leave for the month"})
+    }
   }
 
   exports.salaryPayment = async(req,res)=>{

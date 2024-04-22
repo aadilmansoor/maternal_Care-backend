@@ -145,7 +145,7 @@ exports.searchServiceprovider = async (req, res) => {
   console.log("inside api call to search service provider");
   const { location, service } = req.body;
   try {
-    const searchUser = await readytoBook.find({ location, service });
+    const searchUser = await readytoBook.find({ service });
     if (searchUser.length === 0) {
       res.status(400).json({ message: "No service provider available" });
     } else {
