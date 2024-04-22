@@ -459,3 +459,23 @@ exports.bookingRejectServiceProvider = async (req, res) => {
     res.status(500).json({ message: "invalid token" });
   }
 };
+
+// get service provider by id
+exports.get_Single_serviceProvider= async( req,res)=>{
+  const {userID} = req.body
+  try {
+
+
+    const user = await approvedservicerproviders.findById({_id:userID})
+    if(user){
+      res.status(200).json({user,message:"fetched successfully"})
+    }
+    else{
+      res.status(400).json({message:"fetching failed"})
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+
+    
+  }
+}

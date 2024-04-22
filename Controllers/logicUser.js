@@ -568,3 +568,23 @@ exports.chatget = async (req, res) => {
     res.status(500).json({ message: "message sent error" });
   }
 };
+
+
+exports.get_Single_User= async( req,res)=>{
+  const {userID} = req.body
+  try {
+
+
+    const user = await users.findById({_id:userID})
+    if(user){
+      res.status(200).json({user,message:"fetched successfully"})
+    }
+    else{
+      res.status(400).json({message:"fetching failed"})
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+
+    
+  }
+}

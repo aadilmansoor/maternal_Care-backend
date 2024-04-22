@@ -3,14 +3,14 @@ const express = require('express')
 
 
 //import logic service provider
-const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, serviceProviderfinalRegistration,loginServiceProvider,get_bookingRequest_to_serviceProvider,accept_bookingRequest_by_serviceprovider,reject_bookingRequest_by_serviceprovider, attendanceView, bookingView, bookingAcceptServiceProvider, bookingRejectServiceProvider}=require('../Controllers/logic_ServiceProvider')
+const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, serviceProviderfinalRegistration,loginServiceProvider,get_bookingRequest_to_serviceProvider,accept_bookingRequest_by_serviceprovider,reject_bookingRequest_by_serviceprovider, attendanceView, bookingView, bookingAcceptServiceProvider, bookingRejectServiceProvider, get_Single_serviceProvider}=require('../Controllers/logic_ServiceProvider')
 
 
 // import admin logic
 const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking, salaryCalculation, salaryPayment, chatPostfromAdmin}=require('../Controllers/logicAdmin')
 
 // import logic file for user
-const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule, addReview, viewReview, chatPost, chatget} = require('../Controllers/logicUser')
+const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule, addReview, viewReview, chatPost, chatget, get_Single_User} = require('../Controllers/logicUser')
 
 
 // import multer file
@@ -179,6 +179,13 @@ router.post('/maternalcare/chat/post',chatPost)
 router.post('/maternalcare/chat/get',chatget)
 
 router.post('/maternalcare/chat/post/from/admin',chatPostfromAdmin)
+
+// get service provider with Id
+router.post('/maternalcare/serviceprovider/get/id',get_Single_serviceProvider)
+
+// get user by ID
+router.post('/maternalcare/user/get/id',get_Single_User)
+
 
 
 module.exports=router
