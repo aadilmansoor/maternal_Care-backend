@@ -1,7 +1,7 @@
 // token import
 const jwt = require("jsonwebtoken");
 
-const leaveRequests = require('../DataBase/leaveRequestSchema')
+const leaveRequests = require("../DataBase/leaveRequestSchema");
 
 const approvedservicerproviders = require("../DataBase/approvedServiceProvider");
 // schema import
@@ -13,8 +13,8 @@ const attendance_ServiceProvider = require("../DataBase/attendance_ServiceProvid
 const Bookings = require("../DataBase/booking");
 
 exports.serviceProviderRegistration = async (req, res) => {
-  const exp_crtt = req.file.filename
-const exp_crt = `http://localhost:4000/upload_cirtificate/${exp_crtt}` 
+  const exp_crtt = req.file.filename;
+  const exp_crt = `http://localhost:4000/upload_cirtificate/${exp_crtt}`;
   // const image = req.file.filename
   const {
     username,
@@ -26,7 +26,7 @@ const exp_crt = `http://localhost:4000/upload_cirtificate/${exp_crtt}`
     qualification,
     exp_year,
     rate,
-    location
+    location,
   } = req.body;
   try {
     const existingUser = await servicerproviders.findOne({ email });
@@ -47,7 +47,7 @@ const exp_crt = `http://localhost:4000/upload_cirtificate/${exp_crtt}`
         exp_year,
         rate,
         status: "pending",
-        location
+        location,
       });
       await newUser.save();
       res
@@ -104,13 +104,15 @@ const exp_crt = `http://localhost:4000/upload_cirtificate/${exp_crtt}`
 //Logic for secondary serviceProvider registration
 exports.serviceProviderfinalRegistration = async (req, res) => {
   const image = req.file.filename;
-  const img = `http://localhost:4000/serviceProviderImage/${image}` 
+  const img = `http://localhost:4000/serviceProviderImage/${image}`;
 
   const { email } = req.body;
   console.log(email);
   console.log(img);
   try {
-    const existingUser = await servicerproviders.findOne({ email: email });
+    const existingUser = await approvedservicerproviders.findOne({
+      email: email,
+    });
     if (!existingUser) {
       res.status(400).json({ message: "primary registeration faild" });
     } else {
@@ -118,10 +120,10 @@ exports.serviceProviderfinalRegistration = async (req, res) => {
       const update = {
         $set: { profile_image: img },
       };
-      const result = await servicerproviders.updateOne(filter, update);
+      const result = await approvedservicerproviders.updateOne(filter, update);
       console.log(result);
       if (result.modifiedCount == 1) {
-        const preUser = await servicerproviders.findOne({ email });
+        const preUser = await approvedservicerproviders.findOne({ email });
         res
           .status(200)
           .json({ preUser, message: "photo successfully updated" });
@@ -148,15 +150,14 @@ exports.loginServiceProvider = async (req, res) => {
       const token = jwt.sign(
         {
           serviceProvider_Id: existingUser._id,
-          email:existingUser.email,
+          email: existingUser.email,
           // name:existingUser.username,
           // image:existingUser.profile_image
-
         },
         "superkey2024",
-        { expiresIn: '300m' }
+        { expiresIn: "300m" }
       );
-      res.status(200).json({ token,existingUser });
+      res.status(200).json({ token, existingUser });
       // res
       //   .status(200)
       //   .json({ existingUser, token, message: "login Successfully" });
@@ -179,38 +180,38 @@ exports.attendanceView = async (req, res, next) => {
   }
 
   try {
-    jwt.verify(token, 'superkey2024', async (err, decoded) => {
+    jwt.verify(token, "superkey2024", async (err, decoded) => {
       if (err) {
-        return res.status(403).json({ message: 'Forbidden: Invalid token' });
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
       }
 
       req.userId = decoded.serviceProvider_Id;
 
       try {
         const userId = req.userId;
-        const user = await attendance_ServiceProvider.find({ serviceProviderId: userId });
+        const user = await attendance_ServiceProvider.find({
+          serviceProviderId: userId,
+        });
 
-        const filteredUser = user.filter(record => {
-          const recordMonth = parseInt(record.date.split('-')[1]);
-          const recordyear = parseInt(record.date.split('-')[2]);
+        const filteredUser = user.filter((record) => {
+          const recordMonth = parseInt(record.date.split("-")[1]);
+          const recordyear = parseInt(record.date.split("-")[2]);
           // console.log(parseInt(month));
           // console.log(recordMonth);
           if (month && year)
-            return recordMonth === parseInt(month) && recordyear === parseInt(year)// Compare with provided month value
-          else if (month)
-            return recordMonth === parseInt(month)
-          else if (year)
-            return recordyear === parseInt(year)
-
+            return (
+              recordMonth === parseInt(month) && recordyear === parseInt(year)
+            ); // Compare with provided month value
+          else if (month) return recordMonth === parseInt(month);
+          else if (year) return recordyear === parseInt(year);
         });
         if (filteredUser.length > 0) {
           res.status(200).json(filteredUser);
-        }
-        else {
+        } else {
           res.status(401).json({ message: "no attendance found" });
         }
 
-        next()
+        next();
 
         // res.status(200).json(filtereduser);
       } catch (error) {
@@ -222,8 +223,6 @@ exports.attendanceView = async (req, res, next) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 //get user request on  service provider page
 
@@ -245,206 +244,218 @@ exports.get_bookingRequest_to_serviceProvider = async (req, res) => {
   }
 };
 
-
-
-
 //Attendance of service provider
 
 exports.attendanceServiveProvider = async (req, res) => {
-  const { date, time_in, time_out, workingHours, present } = req.body
+  const { date, time_in, time_out, workingHours, present } = req.body;
 
   try {
     const token = req.headers.authorization;
-console.log(token);
+    console.log(token);
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized: No token provided" });
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
     }
-    jwt.verify(token, 'superkey2024', async (err, decoded) => {
+    jwt.verify(token, "superkey2024", async (err, decoded) => {
       if (err) {
-        return res.status(403).json({ message: 'Forbidden: Invalid token' });
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
       }
       req.userId = decoded.serviceProvider_Id;
-    const userId =req.userId
-    const user = await approvedservicerproviders.findOne({ _id:userId })
-if(!user){
-  res.status(400).json({message:"user not found"})
-}
-    const check = await attendance_ServiceProvider.findOne({ serviceProviderId:userId,date, time_in, time_out,workingHours, present: true })
+      const userId = req.userId;
+      const user = await approvedservicerproviders.findOne({ _id: userId });
+      if (!user) {
+        res.status(400).json({ message: "user not found" });
+      }
+      const check = await attendance_ServiceProvider.findOne({
+        serviceProviderId: userId,
+        date,
+        time_in,
+        time_out,
+        workingHours,
+        present: true,
+      });
 
-    if (check) {
-      res.status(401).json({ message: "already marked" })
-
-    }
-    else {
-      const newUser = new attendance_ServiceProvider({
-        date, time_in, time_out, workingHours, serviceProviderId:userId, present
-      })
-      await newUser.save()
-      res.status(200).json({ newUser, message: "attendance marked" })
-    }
-
-  })
+      if (check) {
+        res.status(401).json({ message: "already marked" });
+      } else {
+        const newUser = new attendance_ServiceProvider({
+          date,
+          time_in,
+          time_out,
+          workingHours,
+          serviceProviderId: userId,
+          present,
+        });
+        await newUser.save();
+        res.status(200).json({ newUser, message: "attendance marked" });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error, message: "server error" });
   }
-  catch (error) {
-    res.status(500).json({ error, message: "server error" })
-  }
-}
+};
 
 //Leave request of service provider
 
-exports.leaveRequest=async(req,res)=>{
-  
-  const {date,reason,additionalNotes}= req.body
+exports.leaveRequest = async (req, res) => {
+  const { date, reason, additionalNotes } = req.body;
 
   try {
-    
     const token = req.headers.authorization;
     console.log(token);
-        if (!token) {
-          return res.status(401).json({ message: "Unauthorized: No token provided" });
-        }
-        jwt.verify(token, 'superkey2024', async (err, decoded) => {
-          if (err) {
-            return res.status(403).json({ message: 'Forbidden: Invalid token' });
-          }
-          const userId = decoded.serviceProvider_Id;
-          const emailId =decoded.email
-         const user = await leaveRequests.findOne({serviceProviderId:userId ,date})
-         const serviceProvider = await approvedservicerproviders.findOne({_id:userId})
-         const image= serviceProvider.profile_image
-         const name = serviceProvider.username
-         if(user){
-          res.status(400).json({message:"Leave Request already marked"})
-         }
-         else{
-          const newleaveReq = new leaveRequests({
-            serviceProviderId:userId,
-            name,
-            image,
-            email:emailId,
-            date,
-            reason,
-            additionalNotes,
-            status:"pending"
-          })
-          await newleaveReq.save()
-          res.status(200).json({newleaveReq,message:"Waiting for admin confirmation"})
-         }
-
-
-  })
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
+    }
+    jwt.verify(token, "superkey2024", async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
+      }
+      const userId = decoded.serviceProvider_Id;
+      const emailId = decoded.email;
+      const user = await leaveRequests.findOne({
+        serviceProviderId: userId,
+        date,
+      });
+      const serviceProvider = await approvedservicerproviders.findOne({
+        _id: userId,
+      });
+      const image = serviceProvider.profile_image;
+      const name = serviceProvider.username;
+      if (user) {
+        res.status(400).json({ message: "Leave Request already marked" });
+      } else {
+        const newleaveReq = new leaveRequests({
+          serviceProviderId: userId,
+          name,
+          image,
+          email: emailId,
+          date,
+          reason,
+          additionalNotes,
+          status: "pending",
+        });
+        await newleaveReq.save();
+        res
+          .status(200)
+          .json({ newleaveReq, message: "Waiting for admin confirmation" });
+      }
+    });
   } catch (error) {
-    res.status(500).json({message:"Internal server error"})
-
+    res.status(500).json({ message: "Internal server error" });
   }
-
-
-}
+};
 
 // booking view by service provider
 
-exports.bookingView =async (req,res)=>{
+exports.bookingView = async (req, res) => {
   try {
     const token = req.headers.authorization;
     console.log(token);
-        if (!token) {
-          return res.status(401).json({ message: "Unauthorized: No token provided" });
-        }
-        jwt.verify(token, 'superkey2024', async (err, decoded) => {
-          if (err) {
-            return res.status(403).json({ message: 'Forbidden: Invalid token' });
-          }
-          const serviceProviderId = decoded.serviceProvider_Id;
-          console.log(serviceProviderId);
-          const user = await Bookings.find({serviceProviderId:serviceProviderId})
-          console.log(user);
-          if(user.length>0){
-            res.status(200).json({user,message:"successfully fetched"})
-
-          }
-          else{
-            res.status(400).json({message:"No bookings available"})
-
-          }
-  })} catch (error) {
-    res.status(500).json({message:"invalid token"})
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
+    }
+    jwt.verify(token, "superkey2024", async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
+      }
+      const serviceProviderId = decoded.serviceProvider_Id;
+      console.log(serviceProviderId);
+      const user = await Bookings.find({
+        serviceProviderId: serviceProviderId,
+      });
+      console.log(user);
+      if (user.length > 0) {
+        res.status(200).json({ user, message: "successfully fetched" });
+      } else {
+        res.status(400).json({ message: "No bookings available" });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "invalid token" });
   }
-}
+};
 
 // service provider accept
-exports.bookingAcceptServiceProvider = async(req,res)=>{
-
-  const {id}= req.body
+exports.bookingAcceptServiceProvider = async (req, res) => {
+  const { id } = req.body;
   try {
     console.log(id);
     const token = req.headers.authorization;
     console.log(token);
-        if (!token) {
-          return res.status(401).json({ message: "Unauthorized: No token provided" });
-        }
-        jwt.verify(token, 'superkey2024', async (err, decoded) => {
-          if (err) {
-            return res.status(403).json({ message: 'Forbidden: Invalid token' });
-          }
-          const serviceProviderId = decoded.serviceProvider_Id;
-    console.log(serviceProviderId);
-          //{
-          //check already booked service provider on booked collection
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
+    }
+    jwt.verify(token, "superkey2024", async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
+      }
+      const serviceProviderId = decoded.serviceProvider_Id;
+      console.log(serviceProviderId);
+      //{
+      //check already booked service provider on booked collection
 
-         // }
-         const updatedBooking = await Bookings.findOneAndUpdate(
-          { _id: id ,serviceProviderStatus: "pending"},
-          { $set: { serviceProviderStatus: "accepted" } },
-          { new: true }
-        );
-    console.log(updatedBooking);
-        if (!updatedBooking) {
-          return res.status(404).json({ message: "Booking already processed" });
-        }
-    
-        res.status(200).json({ booking: updatedBooking });
+      // }
+      const updatedBooking = await Bookings.findOneAndUpdate(
+        { _id: id, serviceProviderStatus: "pending" },
+        { $set: { serviceProviderStatus: "accepted" } },
+        { new: true }
+      );
+      console.log(updatedBooking);
+      if (!updatedBooking) {
+        return res.status(404).json({ message: "Booking already processed" });
+      }
 
-         
-  })} catch (error) {
-    res.status(500).json({message:"invalid token"})
+      res.status(200).json({ booking: updatedBooking });
+    });
+  } catch (error) {
+    res.status(500).json({ message: "invalid token" });
   }
-}
+};
 
 // service provider reject
-exports.bookingRejectServiceProvider = async(req,res)=>{
-
-  const {id}= req.body
+exports.bookingRejectServiceProvider = async (req, res) => {
+  const { id } = req.body;
   try {
     console.log(id);
     const token = req.headers.authorization;
     console.log(token);
-        if (!token) {
-          return res.status(401).json({ message: "Unauthorized: No token provided" });
-        }
-        jwt.verify(token, 'superkey2024', async (err, decoded) => {
-          if (err) {
-            return res.status(403).json({ message: 'Forbidden: Invalid token' });
-          }
-          const serviceProviderId = decoded.serviceProvider_Id;
-    console.log(serviceProviderId);
-          //{
-          //check already booked service provider on booked collection
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
+    }
+    jwt.verify(token, "superkey2024", async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
+      }
+      const serviceProviderId = decoded.serviceProvider_Id;
+      console.log(serviceProviderId);
+      //{
+      //check already booked service provider on booked collection
 
-         // }
-         const updatedBooking = await Bookings.findOneAndUpdate(
-          { _id: id ,serviceProviderStatus: "pending"},
-          { $set: { serviceProviderStatus: "rejected" } },
-          { new: true }
-        );
-    console.log(updatedBooking);
-        if (!updatedBooking) {
-          return res.status(404).json({ message: "Booking  already processed" });
-        }
-    
-        res.status(200).json({ booking: updatedBooking , message:"booking accepted"});
+      // }
+      const updatedBooking = await Bookings.findOneAndUpdate(
+        { _id: id, serviceProviderStatus: "pending" },
+        { $set: { serviceProviderStatus: "rejected" } },
+        { new: true }
+      );
+      console.log(updatedBooking);
+      if (!updatedBooking) {
+        return res.status(404).json({ message: "Booking  already processed" });
+      }
 
-         
-  })} catch (error) {
-    res.status(500).json({message:"invalid token"})
+      res
+        .status(200)
+        .json({ booking: updatedBooking, message: "booking accepted" });
+    });
+  } catch (error) {
+    res.status(500).json({ message: "invalid token" });
   }
-}
+};
