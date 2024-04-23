@@ -5,7 +5,6 @@ const nodemailer = require("nodemailer");
 
 const users = require("../DataBase/modelUser");
 
-const categories = require("../DataBase/schemaCategory");
 
 const webinarSchema = require("../DataBase/webinar_schema");
 
@@ -66,16 +65,7 @@ exports.userRegistration = async (req, res) => {
   }
 };
 
-// get all category
-exports.getallcategories = async (req, res) => {
-  try {
-    const newUser = await categories.find();
 
-    res.status(200).json({ newUser });
-  } catch (error) {
-    res.status(500).json({ message: "server error" });
-  }
-};
 
 //get all subcategory
 exports.getallSubcategories = async (req, res) => {

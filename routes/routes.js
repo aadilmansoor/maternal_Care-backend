@@ -1,6 +1,8 @@
 
 const express = require('express')
 
+// import category logic
+const category = require('../Controllers/category')
 
 //import logic service provider
 const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, serviceProviderfinalRegistration,loginServiceProvider,get_bookingRequest_to_serviceProvider,accept_bookingRequest_by_serviceprovider,reject_bookingRequest_by_serviceprovider, attendanceView, bookingView, bookingAcceptServiceProvider, bookingRejectServiceProvider, get_Single_serviceProvider, edit_serviceprovider}=require('../Controllers/logic_ServiceProvider')
@@ -10,7 +12,7 @@ const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, servi
 const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking, salaryCalculation, salaryPayment, chatPostfromAdmin}=require('../Controllers/logicAdmin')
 
 // import logic file for user
-const {getallSubcategories,getallcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule, addReview, viewReview, chatPost, chatget, get_Single_User, edit_user} = require('../Controllers/logicUser')
+const {getallSubcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule, addReview, viewReview, chatPost, chatget, get_Single_User, edit_user} = require('../Controllers/logicUser')
 
 
 // import multer file
@@ -83,8 +85,6 @@ router.post('/maternalcare/admin/serviceprovider/attendanceview/admin',attendanc
 // user login
 router.post('/maternalcare/user/login',userLogin)
 
-// get all categories
-router.post('/maternalcare/category/get',getallcategories)
 
 // get all sub categories
 router.post('/maternalcare/Subcategories/get', getallSubcategories)
@@ -191,5 +191,20 @@ router.post('/maternalcare/serviceprovider/edit',edit_serviceprovider)
 
 // edit user
 router.post('/maternalcare/user/edit',edit_user)
+
+// add main category
+
+router.post('/maternalcare/maincategory/add',category.add_main_category)
+
+// get all categories
+router.get('/maternalcare/category/get',category.getallcategories)
+
+//delete category
+router.delete('/maternalcare/maincategory/delete',category.deleteCategory)
+
+// add subcategory
+router.post('/maternalcare/subcategory/add',category.addSubcategory)
+
+
 
 module.exports=router
