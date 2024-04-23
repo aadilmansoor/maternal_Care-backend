@@ -204,7 +204,8 @@ router.delete('/maternalcare/maincategory/delete',category.deleteCategory)
 
 // add subcategory
 router.post('/maternalcare/subcategory/add',category.addSubcategory)
-
+// get subcategory
+router.post('/maternalcare/subcategory/get',category.get_sub_category)
 
 
 module.exports=router

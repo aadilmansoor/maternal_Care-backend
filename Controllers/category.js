@@ -81,3 +81,24 @@ else{
  
     }
 }
+
+// get sub category
+
+exports.get_sub_category = async(req,res)=>{
+
+    const {mainCategory}=req.body
+            try {
+        const category = await main_Category.findOne({mainCategory})
+        if (category){
+           res.status(200).json({category,message:"fetched successfully"})
+        }
+        else{
+         
+          res.status(400).json({message:"fectched error"})
+        }
+    } catch (error) {
+        res.status(500).json({error, message:"server error"})
+    }
+
+
+}
