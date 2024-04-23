@@ -1,7 +1,7 @@
 
 const main_Category = require('../DataBase/mainCategory')
 
-
+const emergency = require('../DataBase/emergency')
 // add main category
 
 exports.add_main_category = async(req,res)=>{
@@ -101,4 +101,48 @@ exports.get_sub_category = async(req,res)=>{
     }
 
 
+}
+
+
+// add emergency
+exports.add_emergency = async(req,res)=>{
+
+    const {
+        emergency_support,
+        location,
+        phonenumber}=req.body
+            try {
+        const exist_emergency = await emergency.findOne({ emergency_support,
+            location,
+            phonenumber})
+        if (exist_emergency){
+           res.status(400).json({message:"details already exists"})
+        }
+        else{
+          const  new_emergency = new  emergency({  emergency_support,
+            location,
+            phonenumber})
+          await new_emergency.save()
+          res.status(200).json({new_emergency,message:"emergency added successfully"})
+        }
+    } catch (error) {
+        res.status(500).json({error, message:"server error"})
+    }
+}
+
+// get all emergency details
+exports.getEmergency = async(req,res)=>{
+   try {
+    const emergency_details= await emergency.find()
+    if(emergency_details.length>0){
+        res.status(200).json({emergency_details,message:"fetched successfully"})
+
+    }
+    else{
+        res.status(400).json({message:"no data available"})
+    }
+   } catch (error) {
+    res.status(500).json({error, message:"server error"})
+
+   }
 }

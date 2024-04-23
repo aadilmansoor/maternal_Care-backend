@@ -207,5 +207,9 @@ router.post('/maternalcare/subcategory/add',category.addSubcategory)
 // get subcategory
 router.post('/maternalcare/subcategory/get',category.get_sub_category)
 
+// add emergency
+router.post('/maternalcare/emergency/add',category.add_emergency)
 
+//get emergency
+router.get('/maternalcare/emergency/get',category.getEmergency)
 module.exports=router
