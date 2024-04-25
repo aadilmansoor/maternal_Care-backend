@@ -4,6 +4,8 @@ const express = require('express')
 // import category logic
 const category = require('../Controllers/category')
 
+const chat = require('../Controllers/chat')
+
 //import logic service provider
 const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, serviceProviderfinalRegistration,loginServiceProvider,get_bookingRequest_to_serviceProvider,accept_bookingRequest_by_serviceprovider,reject_bookingRequest_by_serviceprovider, attendanceView, bookingView, bookingAcceptServiceProvider, bookingRejectServiceProvider, get_Single_serviceProvider, edit_serviceprovider}=require('../Controllers/logic_ServiceProvider')
 
@@ -173,12 +175,12 @@ router.post('/maternalcare/serviceprovider/review',addReview)
 router.post('/maternalcare/serviceprovider/review/view',viewReview)
 
 //post chat
-router.post('/maternalcare/chat/post',chatPost)
+// router.post('/maternalcare/chat/post',chatPost)
 
 //get chat
-router.post('/maternalcare/chat/get',chatget)
+// router.post('/maternalcare/chat/get',chatget)
 
-router.post('/maternalcare/chat/post/from/admin',chatPostfromAdmin)
+// router.post('/maternalcare/chat/post/from/admin',chatPostfromAdmin)
 
 // get service provider with Id
 router.post('/maternalcare/serviceprovider/get/id',get_Single_serviceProvider)
@@ -212,4 +214,21 @@ router.post('/maternalcare/emergency/add',category.add_emergency)
 
 //get emergency
 router.get('/maternalcare/emergency/get',category.getEmergency)
+
+// post chat
+router.post('/maternalcare/chat/post',chat.user_chat_post)
+
+// chat admin read
+
+router.post('/maternalcare/chat/admin/read',chat.adminRead)
+
+// chat post admin
+router.post('/maternitycare/admin/chat/post',chat.admin_chat_post)
+
+// chat read user
+router.post('/maternity/chat/user/read',chat.userRead)
+
+// get all chat
+router.get('/maternalcare/chat/get',chat.getallchat)
+
 module.exports=router

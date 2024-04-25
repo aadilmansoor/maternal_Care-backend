@@ -12,19 +12,11 @@ const complaintSchema = mongoose.model('complaintSchema',{
        
     },
   
-//     receiverId:{
-//         type:String,
+    receiverId:{
+        type:String,
         
-//     },
-//    user_message:{
-//         type:[]
-//         // required:true
-       
-//     },
-//     admin_message:{
-//         type:String,
-  
-//     }
+    },
+
 message:{
     type:[]
 }

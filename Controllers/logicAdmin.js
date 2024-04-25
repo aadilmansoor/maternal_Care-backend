@@ -559,16 +559,16 @@ else{
  }
   }
 
-  exports.chatPostfromAdmin= async(req,res)=>{
+//   exports.chatPostfromAdmin= async(req,res)=>{
 
-    const {userID,message}= req.body
+//     const {userID,message}= req.body
 
-try {
-    const newUser = await complaints({senderId:"admin123",receiverId:userID,admin_message:message})
-    await newUser.save()
-    res.status(200).json({message:"message sent"})
-} catch (error) {
-    res.status(500).json({ message: 'message sent error' });  
+// try {
+//     const newUser = await complaints({senderId:"admin123",receiverId:userID,admin_message:message})
+//     await newUser.save()
+//     res.status(200).json({message:"message sent"})
+// } catch (error) {
+//     res.status(500).json({ message: 'message sent error' });  
 
-}
-  }
+// }
+//   }

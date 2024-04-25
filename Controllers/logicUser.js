@@ -441,6 +441,7 @@ cron.schedule("* * * * *", async () => {
       endingTime: currentTime,
       endDate: currentDate,
     });
+    
     if (users.length > 0) {
       console.log("testing started");
       for (const user of users) {
@@ -531,34 +532,34 @@ exports.viewReview = async (req, res) => {
   }
 };
 
-exports.chatPost = async (req, res) => {
-  const { userID, message } = req.body;
+// exports.chatPost = async (req, res) => {
+//   const { userID, message } = req.body;
 
-  try {
-    const newUser = await complaints({
-      senderId: userID,
-      receiverId: "admin123",
-      user_message: message,
-    });
-    await newUser.save();
-    res.status(200).json({ message: "message sent" });
-  } catch (error) {
-    res.status(500).json({ message: "message sent error" });
-  }
-};
+//   try {
+//     const newUser = await complaints({
+//       senderId: userID,
+//       receiverId: "admin123",
+//       user_message: message,
+//     });
+//     await newUser.save();
+//     res.status(200).json({ message: "message sent" });
+//   } catch (error) {
+//     res.status(500).json({ message: "message sent error" });
+//   }
+// };
 
-exports.chatget = async (req, res) => {
-  const { userID } = req.body;
+// exports.chatget = async (req, res) => {
+//   const { userID } = req.body;
 
-  try {
-    const user = await complaints.find({
-      $or: [{ senderId: userID }, { senderId: "admin123" }],
-    });
-    res.status(200).json({ user });
-  } catch (error) {
-    res.status(500).json({ message: "message sent error" });
-  }
-};
+//   try {
+//     const user = await complaints.find({
+//       $or: [{ senderId: userID }, { senderId: "admin123" }],
+//     });
+//     res.status(200).json({ user });
+//   } catch (error) {
+//     res.status(500).json({ message: "message sent error" });
+//   }
+// };
 
 
 exports.get_Single_User= async( req,res)=>{

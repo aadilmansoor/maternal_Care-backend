@@ -12,4 +12,5 @@ const categories = mongoose.model('categories',{
     }]
 
 })
+
 module.exports=categories
