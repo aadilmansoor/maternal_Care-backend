@@ -5,7 +5,7 @@ const chat = require('../DataBase/chat')
 // post chat from user
 exports.user_chat_post = async(req,res)=>{
 
-    const {userId,text}= req.body
+    const {userId,username,text}= req.body
     let count;
     try {
         const chatPost = await chat.findOne({userId})
@@ -22,7 +22,7 @@ exports.user_chat_post = async(req,res)=>{
     }
     else{
         count=1
-        const res_message = await chat.create({userId,message: [{ userMessage: {message:text, status: "unread"} ,adminMessage:{message: '', status: ''}}],userUnreadcount:count})
+        const res_message = await chat.create({userId,username,message: [{ userMessage: {message:text, status: "unread"} ,adminMessage:{message: '', status: ''}}],userUnreadcount:count})
          const response = await res_message.save()
          res.status(200).json({response, message:"posted successfully"})
     }

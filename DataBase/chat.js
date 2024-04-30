@@ -15,6 +15,9 @@ const chat = mongoose.model('chat',{
   userId:{
     type:String
   },
+  username:{
+    type:String
+  },
  
 message:{
     type:[]
