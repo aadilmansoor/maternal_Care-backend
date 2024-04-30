@@ -18,12 +18,12 @@ exports.user_chat_post = async(req,res)=>{
         res.status(200).json({ chatPost, message: "posted successfully" });
       
        
-
     }
     else{
         count=1
         const res_message = await chat.create({userId,username,message: [{ userMessage: {message:text, status: "unread"} ,adminMessage:{message: '', status: ''}}],userUnreadcount:count})
-         const response = await res_message.save()
+         console.log(res_message);
+        const response = await res_message.save()
          res.status(200).json({response, message:"posted successfully"})
     }
     } catch (error) {
