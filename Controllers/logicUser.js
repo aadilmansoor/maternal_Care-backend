@@ -217,6 +217,7 @@ exports.primaryBooking = async (req, res) => {
         amountStatus: "unpaid",
         serviceProviderStatus: "pending",
         adminStatus: "pending",
+        bookingPeriod: "on"
       });
 
       await user.save();
@@ -622,6 +623,51 @@ exports.edit_user = async (req, res) => {
     
      }
   catch (error) {
+    res.status(500).json({ message: "internal server error" });
+  }
+};
+
+// get specific service provider of whose service under taking
+
+exports.getSpecificServiceProvider = async (req, res) => {
+  try {
+
+    const token = req.headers.authorization;
+    console.log(token);
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
+    }
+    jwt.verify(token, "user_superkey2024", async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "Forbidden: Invalid token" });
+      }
+
+      // const userEmail = decoded.user_email;
+
+      // const userName = decoded.user_name;
+      const userId = decoded.user_id;
+
+      const bill = await Bookings.find({
+        userId: userId,
+        adminStatus: "approved",
+        bookingPeriod: "on"
+      
+      });
+      // const  serviceProviderId =bill.serviceProviderId
+
+     
+      if (bill.length > 0) {
+        // res.status(200).json({ serviceProviderId
+        //   , message: " fetched successfully" });
+        res.status(200).json({ serviceProviderId: bill[0].serviceProviderId, message: "Fetched successfully" });
+
+      } else {
+        res.status(400).json({ message: "fetching error" });
+      }
+    });
+  } catch (error) {
     res.status(500).json({ message: "internal server error" });
   }
 };

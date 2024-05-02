@@ -171,26 +171,26 @@ exports.loginServiceProvider = async (req, res) => {
 
 // attendance of service provider on his page by verify token
 exports.attendanceView = async (req, res, next) => {
-  const { month, year } = req.body;
+  const { month, year,serviceProviderId } = req.body;
 
-  const token = req.headers.authorization;
+  // const token = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized: No token provided" });
-  }
+  // if (!token) {
+  //   return res.status(401).json({ message: "Unauthorized: No token provided" });
+  // }
 
-  try {
-    jwt.verify(token, "superkey2024", async (err, decoded) => {
-      if (err) {
-        return res.status(403).json({ message: "Forbidden: Invalid token" });
-      }
+ 
+    // jwt.verify(token, "superkey2024", async (err, decoded) => {
+    //   if (err) {
+    //     return res.status(403).json({ message: "Forbidden: Invalid token" });
+    //   }
 
-      req.userId = decoded.serviceProvider_Id;
+      // req.userId = decoded.serviceProvider_Id;
 
       try {
-        const userId = req.userId;
+        // const userId = req.userId;
         const user = await attendance_ServiceProvider.find({
-          serviceProviderId: userId,
+          serviceProviderId
         });
 
         const filteredUser = user.filter((record) => {
@@ -218,11 +218,7 @@ exports.attendanceView = async (req, res, next) => {
         console.error("Error while fetching user data:", error);
         res.status(500).json({ message: "Internal Server Error" });
       }
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+}
 
 //get user request on  service provider page
 

@@ -14,7 +14,7 @@ const {leaveRequest,attendanceServiveProvider,serviceProviderRegistration, servi
 const {webinarRegistration,rejectLeaveReq,gelAllLeaveRequests,rejectionServiceProvider,getServiceProviderRequest,approvalServiceProvider,getApprovedServiceProviderList,getBookingRequest,admin_approval_bookingrequest,adminlogin, attendanceViewServiceProvider, acceptLeaveReq, blogRegistration, viewAllBooking, confirmBooking, viewacceptedBooking, viewrejectedBooking, viewpendingBooking, salaryCalculation, salaryPayment, chatPostfromAdmin}=require('../Controllers/logicAdmin')
 
 // import logic file for user
-const {getallSubcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule, addReview, viewReview, chatPost, chatget, get_Single_User, edit_user} = require('../Controllers/logicUser')
+const {getallSubcategories,userLogin,userRegistration, webinarView, blogsView, searchServiceprovider, primaryBooking, getUnpaidBill, getbookingDetails, payment, reshedule, addReview, viewReview, chatPost, chatget, get_Single_User, edit_user,getSpecificServiceProvider} = require('../Controllers/logicUser')
 
 
 // import multer file
@@ -230,5 +230,8 @@ router.post('/maternity/chat/user/read',chat.userRead)
 
 // get all chat
 router.get('/maternalcare/chat/get',chat.getallchat)
+
+// get specific service provider 
+router.get('/maternalcare/specificserviceprovider',getSpecificServiceProvider)
 
 module.exports=router
