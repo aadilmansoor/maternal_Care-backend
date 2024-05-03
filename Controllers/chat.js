@@ -116,7 +116,7 @@ exports.userRead = async (req,res)=>{
         res.status(200).json({chatPost,message:"get successfully all message"})
     }
     else{
-        res.status(200).json({message:"no chat found"})
+        res.status(404).json({message:"no chat found"})
     }
    } catch (error) {
     console.log(error);
