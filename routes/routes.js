@@ -225,7 +225,7 @@ router.post('/maternalcare/chat/admin/read',chat.adminRead)
 // chat post admin
 router.post('/maternitycare/admin/chat/post',chat.admin_chat_post)
 
-// chat read user
+// chat read user on click
 router.post('/maternity/chat/user/read',chat.userRead)
 
 // get all chat
@@ -240,5 +240,8 @@ router.post('/maternalcare/complaints/post',chat.postComplaints)
 
 // get all complaints
 router.get('/maternalcare/complaints/get',chat.getComplaints)
+
+//get admin message on user page
+router.get('/maternalcare/chat/user',chat.userReadMessage)
 
 module.exports=router

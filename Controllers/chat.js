@@ -85,9 +85,24 @@ exports.admin_chat_post = async(req,res)=>{
         res.status(500).json({error,message:"inetrnal server error"}) 
     }
 }
+ // user read only
+ exports.userReadMessage = async(req,res)=>{
+    const {userId}= req.body
+    try {
+        const chatGet= await chat.findOne({userId})
+        if(chatGet){
+            res.status(200).json({chatGet,message:"fetched successfully"})
+        }
+        else{
+            res.status(400).json({message:"fetched error"})
+        }
+    } catch (error) {
+        res.status(500).json({error,message:"inetrnal server error"}) 
  
+    }
+ }
 
-//user read
+//user read on click
 exports.userRead = async (req,res)=>{
     const {userId} = req.body
    try {
