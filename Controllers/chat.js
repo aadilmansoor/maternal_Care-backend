@@ -112,7 +112,7 @@ exports.userRead = async (req,res)=>{
 
 exports.getallchat = async( req,res)=>{
 try {
-    const chatPost = await chat.find()
+    const chatPost = await chat.find().sort({ updatedAt: -1, })
     if(chatPost.length>0){
         res.status(200).json({chatPost,message:"fetched successfully"})
     }

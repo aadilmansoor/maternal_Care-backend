@@ -9,29 +9,29 @@
 //  Chat box
 
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const chat = mongoose.model('chat',{
-  userId:{
-    type:String
-  },
-  username:{
-    type:String
-  },
- 
-message:{
-    type:[]
-},
+const chatSchema = new mongoose.Schema({
+    userId: {
+        type: String
+    },
+    username: {
+        type: String
+    },
+    message: {
+        type: []
+    },
+    userUnreadcount: {
+        type: Number,
+        default: 0
+    },
+    adminUnreadcount: {
+        type: Number,
+        default: 0
+    }
+}, { timestamps: true }); // Enable timestamps within the same object
 
-userUnreadcount:{
-  type:Number,
-  default: 0
-},
-adminUnreadcount:{
-  type:Number,
-  default: 0
-},
+const Chat = mongoose.model('Chat', chatSchema);
 
-})
 
-module.exports=chat
+module.exports = Chat;
