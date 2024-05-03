@@ -242,6 +242,6 @@ router.post('/maternalcare/complaints/post',chat.postComplaints)
 router.get('/maternalcare/complaints/get',chat.getComplaints)
 
 //get admin message on user page
-router.get('/maternalcare/chat/user',chat.userReadMessage)
+router.post('/maternalcare/chat/user',chat.userReadMessage)
 
 module.exports=router
