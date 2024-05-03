@@ -1,6 +1,7 @@
 
 const chat = require('../DataBase/chat')
 
+const complaints = require('../DataBase/complaints')
 
 // post chat from user
 exports.user_chat_post = async(req,res)=>{
@@ -128,3 +129,36 @@ try {
 }
 }
 
+
+// complaints registration
+
+exports.postComplaints = async(req,res)=>{
+    const {userId,name,subject,reason} = req.body
+    try {
+        const message = await complaints.create({userId,name,subject,reason})
+        const response = await message.save()
+        console.log(response);
+        res.status(200).json({response,message:"complaints registered successfully"})
+    } catch (error) {
+        res.status(500).json({error,message:"inetrnal server error"})
+
+    }
+}
+
+
+// get all complaints 
+
+exports.getComplaints= async( req,res)=>{
+    try {
+        const response = await complaints.find().sort({createdAt:-1})
+        if(response.length>0){
+            res.status(200).json({response,message:"fetched successsfully"})
+        }
+        else{
+            res.status(400).json({message:"fetching failed"})
+        }
+    } catch (error) {
+        res.status(500).json({error,message:"inetrnal server error"})
+
+    }
+}

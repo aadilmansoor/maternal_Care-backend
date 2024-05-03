@@ -6,22 +6,31 @@
 
 const mongoose = require('mongoose')
 
-const complaintSchema = mongoose.model('complaintSchema',{
-    senderId: {
+const complaintSchema = mongoose.Schema({
+    userId: {
         type: String,
-       
+       required:true
     },
   
-    receiverId:{
+    name:{
         type:String,
-        
+        required:true
     },
 
-message:{
-    type:[]
+subject:{
+    type:String,
+    required:true
+
+},
+
+reason:{
+    type:String,
+    required:true
+
 }
 
 
-})
+},{ timestamps: true })
 
-module.exports=complaintSchema
+const complaint = mongoose.model('complaintSchema',complaintSchema)
+module.exports=complaint

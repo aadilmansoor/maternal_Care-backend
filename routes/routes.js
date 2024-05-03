@@ -234,4 +234,11 @@ router.get('/maternalcare/chat/get',chat.getallchat)
 // get specific service provider 
 router.get('/maternalcare/specificserviceprovider',getSpecificServiceProvider)
 
+// post complaints
+
+router.post('/maternalcare/complaints/post',chat.postComplaints)
+
+// get all complaints
+router.get('/maternalcare/complaints/get',chat.getComplaints)
+
 module.exports=router
