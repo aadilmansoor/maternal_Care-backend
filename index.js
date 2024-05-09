@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 
 require("./DataBase/connection");
 
@@ -20,7 +20,7 @@ server.use(
 server.use(express.json());
 
 server.options("*", cors());
-server.use(cookieParser())
+server.use(cookieParser());
 server.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
@@ -36,11 +36,10 @@ server.use(function (req, res, next) {
 });
 
 // enable  image folder
-server.use('/serviceProviderImage',express.static('./serviceProviderImage'))
-server.use('/upload_cirtificate', express.static('./upload_cirtificate'))
-server.use('/webinarImage', express.static('./webinarImage'))
-server.use('/blogImage', express.static('./blogImage'))
-
+server.use("/serviceProviderImage", express.static("./serviceProviderImage"));
+server.use("/upload_cirtificate", express.static("./upload_cirtificate"));
+server.use("/webinarImage", express.static("./webinarImage"));
+server.use("/blogImage", express.static("./blogImage"));
 
 server.use(router);
 
