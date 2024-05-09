@@ -26,10 +26,7 @@ server.use(express.json());
 server.options("*", cors());
 server.use(cookieParser());
 server.use(function (req, res, next) {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://maternal-care.vercel.app/"
-  );
+  res.header("Access-Control-Allow-Origin", "https://maternal-care.vercel.app");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
