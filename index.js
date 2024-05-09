@@ -1,45 +1,37 @@
 require("dotenv").config();
 
 const express = require("express");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+const router = require("./routes/routes");
 require("./DataBase/connection");
 
-const cors = require("cors");
-
 const server = express();
-const router = require("./routes/routes");
 
-server.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-      "https://maternal-care.vercel.app/",
-    ],
-    credentials: true,
-  })
-);
+// CORS middleware setup
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://maternal-care.vercel.app",
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+server.use(cors(corsOptions));
 
 server.use(express.json());
-
-server.options("*", cors());
 server.use(cookieParser());
-server.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://maternal-care.vercel.app");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-  next();
-});
 
-// enable  image folder
+// Serving static files
 server.use("/serviceProviderImage", express.static("./serviceProviderImage"));
 server.use("/upload_cirtificate", express.static("./upload_cirtificate"));
 server.use("/webinarImage", express.static("./webinarImage"));
@@ -47,12 +39,12 @@ server.use("/blogImage", express.static("./blogImage"));
 
 server.use(router);
 
-const port = 4000 || process.env.port;
+const port = process.env.PORT || 4000;
 
 server.listen(port, () => {
-  console.log(`server start at ${port}`);
+  console.log(`Server started on port ${port}`);
 });
 
 server.get("/", (req, res) => {
-  res.status(200).json("service started");
+  res.status(200).json("Service started");
 });
